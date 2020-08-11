@@ -62,19 +62,19 @@ class EditPost extends Component {
             <TextInputComponent
                 label={"Title: "}
                 logChange={this.titleChange}
-                defaultText={this.props.loadedTitle}
+                defaultText={this.props.location.state.loadedTitle}
             />
 
             <TextInputComponent
                 label={"Price: "}
                 logChange={this.costChange}
-                defaultText={this.props.loadedPrice}
+                defaultText={this.props.location.state.loadedPrice}
             />
 
             <TextAreaComponent
                 label={"Description: "}
                 logChange={this.descriptionChange}
-                defaultText={this.props.loadedDescription}
+                defaultText={this.props.location.state.loadedDescription}
             />
 
             <ImageDragDropComponent />
@@ -82,7 +82,7 @@ class EditPost extends Component {
             <TextInputComponent
                 label={"Contact Info: "}
                 logChange={this.contactChange}
-                defaultText={this.props.loadedContactInfo}
+                defaultText={this.props.location.state.loadedContactInfo}
             />
 
             <ButtonComponent
