@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { Link } from "react-router-dom";
 import Post from './Post';
+import LinkBar from '../components/LinkBar'
 
 // THIS IS THE DATA THAT FAVORITES WILL NEED TO POPULATE ITS LIST
 let data = [
@@ -46,13 +47,8 @@ class Favorites extends Component {
 
     return(
         <div>
+            <LinkBar />
             <h1>Favorites Page</h1>
-            <div>
-                <Link to="/BuyerHome"> Back to buyer home </Link>
-            </div>
-            <div>
-                <Link to="/Search"> Go to Search </Link>
-            </div>
 
             <div>
                 {this.favoriteList()}

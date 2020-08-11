@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import { Link } from "react-router-dom";
+import LinkBar from '../components/LinkBar'
 
 
 // THIS IS THE DATA THAT SELLER HOME WILL NEED TO POPULATE THE SELLER'S POSTS
@@ -49,16 +50,10 @@ class SellerHome extends Component {
     }
 
   render() {
-    return(
-        <div>
+      return (
+          <div>
+            <LinkBar />
             <h1>Seller Home</h1>
-            <div>
-                <Link to="/Home"> Back </Link>
-            </div>
-
-            <div>
-                <Link to="/AddPost"> Add Post </Link>
-            </div>
 
             <div>
                 <h2> POSTS </h2>

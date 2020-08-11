@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Link } from "react-router-dom";
 import TextInputComponent from '../components/TextInputComponent'
 import ButtonComponent from '../components/ButtonComponent'
-
+import LinkBar from '../components/LinkBar'
 
 // THIS IS THE DATA THAT SEARCH PAGE WILL NEED TO RECEIVE AFTER CALLING THE SERVER
 let data = [
@@ -47,14 +47,8 @@ class Search extends Component {
         return (
 
         <div>
+            <LinkBar />
             <h1> Search Page</h1>
-            <div>
-                <Link to="/BuyerHome"> Back to buyer home </Link>
-            </div>
-
-            <div>
-                <Link to="/Favorites"> Favorites </Link>
-            </div>
 
             <TextInputComponent label={"Find Item: "} />
 

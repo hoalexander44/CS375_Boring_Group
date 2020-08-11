@@ -55,7 +55,7 @@ class AddPost extends Component {
 
             <h1>Add Post</h1>
             <div>
-                <Link to="/SellerHome"> Back </Link>
+                <Link to="/SellerHome"> My Posts </Link>
             </div>
 
             <TextInputComponent
