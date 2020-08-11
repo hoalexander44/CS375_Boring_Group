@@ -31,8 +31,9 @@ class App extends Component {
     	    	<Route exact path="/SellerHome" component={SellerHome} />
     	    	<Route exact path="/EditPost" component={EditPost} />
     	    	<Route exact path="/Favorites" component={Favorites} />
-    	    	<Route exact path="/Search" component={Search} />
-    	    	<Route exact path="/Post" component={Post} />
+                <Route exact path="/Search" component={Search} />
+
+                <Route exact path="/Post" component={Post} />
     			<Route exact path="/AddPost" component={AddPost} />
     			<Route exact path = "/404" component={NotFound} />
     			<Redirect to="/404"/>

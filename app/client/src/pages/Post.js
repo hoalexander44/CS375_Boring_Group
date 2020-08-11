@@ -3,29 +3,23 @@ import { Link } from "react-router-dom";
 import '../App.css';
 import FavoriteStar from '../components/FavoriteStar'
 
-let title = "New Phone";
-let cost = 300;
-let description = "This is my new phone wow! It is pretty wonderful.";
-let contact = "abc123@gmail.com";
-let isFavorite = true;
 
 class Post extends Component {
   render() {
     return(
         <div>
-            <p><Link to="/Search"> Back to Search </Link></p>
-            <FavoriteStar />
-            <h1>{title} - {cost} (Basic Post)</h1>
+            <FavoriteStar isFavorite={this.props.location.state.favorite} />
+            <h1>{this.props.location.state.title} - {this.props.location.state.cost} (Basic Post)</h1>
 
             <p>
-                {description}
+                {this.props.location.state.description}
             </p>
 
             <div>
                 IMAGE HERE
             </div>
 
-            contact me at: {contact}
+            contact me at: {this.props.location.state.contact}
         </div>
     );
   }

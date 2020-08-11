@@ -37,7 +37,7 @@ class AddPost extends Component {
         console.log(contact);
     }
 
-    //Output
+    //Output **********************************************************************************************************
     submitting = (event) => {
         if (isNum(cost)) {
             console.log("submitting...");
