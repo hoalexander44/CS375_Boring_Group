@@ -7,6 +7,15 @@ class BuyerHome extends Component {
     return(
         <div>
             <h1>Buyer Home</h1>
+            <div>
+                <Link to="/Search"> Search </Link>
+            </div>
+            <div>
+                <Link to="/Favorites"> Favorites </Link>
+            </div>
+            <div>
+                <Link to="/Home"> Home </Link>
+            </div>
         </div>
     );
   }

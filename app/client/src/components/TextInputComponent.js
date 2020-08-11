@@ -8,9 +8,9 @@ class TextInputComponent extends Component {
                 <label for="textInput">{this.props.label}</label>
                 <input
                     type="text"
-                    id="textInput"
                     name="textInput"
-                    onChange={this.props.logChange}>
+                    onChange={this.props.logChange}
+                    defaultValue={this.props.defaultText}>
                 </input>
             </div>
         );

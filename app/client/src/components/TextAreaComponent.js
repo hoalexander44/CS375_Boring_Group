@@ -10,11 +10,11 @@ class TextAreaComponent extends Component {
                 </label>
 
                 <textarea
-                    id="textArea"
                     name="textArea"
                     rows="4"
                     cols="50"
-                    onChange={this.props.logChange}>
+                    onChange={this.props.logChange}
+                    defaultValue={this.props.defaultText}>
                 </textarea>
             </div>
         );

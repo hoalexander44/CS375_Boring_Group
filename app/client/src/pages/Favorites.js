@@ -7,7 +7,14 @@ class Favorites extends Component {
     return(
         <div>
             <h1>Favorites Page</h1>
+            <div>
+                <Link to="/BuyerHome"> Back to buyer home </Link>
+            </div>
+            <div>
+                <Link to="/Search"> Go to Search </Link>
+            </div>
         </div>
+
     );
   }
 }

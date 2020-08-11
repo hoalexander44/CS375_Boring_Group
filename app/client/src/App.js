@@ -6,6 +6,7 @@ import './App.css';
 import GenericComponent from './components/GenericComponent'
 
 // pages
+import Overview from './pages/Overview'
 import HomePage from './pages/HomePage'
 import AddPost from './pages/AddPost'
 import NotFound from './pages/404Page'
@@ -23,7 +24,8 @@ class App extends Component {
     return(
     	<Router>
     		<Switch>
-    	    	<Route exact path="/" component={HomePage} />
+                <Route exact path="/" component={Overview} />
+                <Route exact path="/Home" component={HomePage} />
     	    	<Route exact path="/Login" component={Login} />
     	    	<Route exact path="/BuyerHome" component={BuyerHome} />
     	    	<Route exact path="/SellerHome" component={SellerHome} />

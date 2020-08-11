@@ -51,12 +51,17 @@ class AddPost extends Component {
     }
   render() {
     return(
-    	<div>
-    		<h1>Add Post</h1>
+        <div>
+
+            <h1>Add Post</h1>
+            <div>
+                <Link to="/SellerHome"> Back </Link>
+            </div>
 
             <TextInputComponent
                 label={"Title: "}
-                logChange={this.titleChange} />
+                logChange={this.titleChange}
+                />
 
             <TextInputComponent
                 label={"Price: "}
@@ -74,9 +79,9 @@ class AddPost extends Component {
             
             <ButtonComponent
                 label={"Submit"}
-                isPressed={this.submitting}/>
+                isPressed={this.submitting} />
 
-    	</div>
+        </div>
     );
   }
 }

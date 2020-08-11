@@ -4,6 +4,10 @@ import './component.css';
 
 //www.youtube.com/watch?v=hqSlVvKvvjQ was heavily referenced
 
+function save(data, filename, type) {
+
+}
+
 class ImageDragDropComponent extends Component {
 
     classChange = (event) => {
@@ -21,7 +25,17 @@ class ImageDragDropComponent extends Component {
     fileDropped = (event) => {
         event.preventDefault();
         event.target.classList = "dropzone";
+        let files = event.dataTransfer.files;
         console.log(event.dataTransfer.files);
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].type !== "image/png") {
+                console.log("Invalid file dropped!");
+                return;
+            }
+        }
+
+        console.log(files[0]);
+        console.log("valid file!");
     }
 
     render() {
@@ -30,7 +44,6 @@ class ImageDragDropComponent extends Component {
 
             <div
                 className="dropzone"
-                id="dropzone"
                 onDragOver={this.classChange}
                 onDragLeave={this.classRevert}
                 onDrop={this.fileDropped}>
