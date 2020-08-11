@@ -56,7 +56,7 @@ class SellerHome extends Component {
             <h1>Seller Home</h1>
 
             <div>
-                <h2> POSTS </h2>
+                <h2> MY POSTS </h2>
                 {this.editPostList()}
             </div>
         </div>
