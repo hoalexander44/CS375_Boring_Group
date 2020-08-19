@@ -28,7 +28,7 @@ let data = [
         contact: "myEmail@gmail.com",
         favorite: true
     }
-]
+];
 
 
 class SellerHome extends Component {
@@ -47,7 +47,7 @@ class SellerHome extends Component {
             }}>{data[i].title} - ${data[i].cost}</Link></div>);
         }
         return rows
-    }
+    };
 
   render() {
       return (

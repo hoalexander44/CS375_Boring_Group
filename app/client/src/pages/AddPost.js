@@ -40,15 +40,14 @@ class AddPost extends Component {
     //Output **********************************************************************************************************
     submitting = (event) => {
         if (isNum(cost)) {
-            console.log("submitting...");
-            let data = { description: description, title: title, cost: cost, contact: contact }
-            console.log(data);
+            let data = { description: description, title: title, cost: cost, contact: contact };
+            console.log("submitting data: " + JSON.stringify(data));
         }
         else {
             console.log("cost is not valid");
         }
 
-    }
+    };
   render() {
     return(
         <div>
