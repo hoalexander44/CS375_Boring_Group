@@ -7,13 +7,14 @@ class LinkBar extends Component {
         return (
             <div>
                 <table>
-                    <tr>
-                        <th><Link to="/Home"> Home </Link> </th>
-                        <th><Link to="/Search"> Search </Link> </th>
-                        <th><Link to="/Favorites"> Favorites </Link> </th>
-                        <th><Link to="/AddPost"> Add Post </Link> </th>
-                        <th><Link to="/SellerHome"> Edit Post </Link> </th>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <th><Link to="/Home">Home</Link> </th>
+                            <th><Link to="/MyPosts">My Posts</Link> </th>
+                            <th><Link to="/Favorites">Favorites</Link> </th>
+                            <th><Link to="/Search">Search</Link> </th>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         );

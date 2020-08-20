@@ -1,5 +1,4 @@
 import React, {Component} from 'react';
-import { Link } from "react-router-dom";
 import LinkBar from '../components/LinkBar'
 
 
@@ -10,7 +9,7 @@ class HomePage extends Component {
             <LinkBar />
             <h1>Home</h1>
             <p>This is the brand new market place website we created!</p>
-            <p> Please use the link bar to navigate!</p>
+            <p>Please use the link bar to navigate!</p>
         </div>
     );
   }

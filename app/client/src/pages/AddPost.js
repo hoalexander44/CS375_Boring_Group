@@ -1,11 +1,13 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import '../App.css';
 import TextInputComponent from '../components/TextInputComponent'
 import TextAreaComponent from '../components/TextAreaComponent'
 import ButtonComponent from '../components/ButtonComponent'
 import ImageDragDropComponent from '../components/ImageDragDropComponent'
 import TextOutputComponent from "../components/TextOutputComponent";
+import LinkBar from "../components/LinkBar";
+import {post} from "../request";
 
 class AddPost extends Component {
     constructor(props) {
@@ -17,7 +19,7 @@ class AddPost extends Component {
         this.description = '';
         this.title = '';
         this.cost = 0;
-        this.sellerId = 1; // TODO
+        this.userId = props.userId;
     }
 
     descriptionChange = (event) => {
@@ -32,21 +34,20 @@ class AddPost extends Component {
         this.cost = event.target.value;
     };
 
-    isRequestValid = (title, description, cost) => {
-        return title && description && !isNaN(cost);
+    userIdChange = (event) => {
+        this.userId = event.target.value;
     };
 
-    submitting = () => {
-        if (this.isRequestValid(this.title, this.description, this.cost)) {
+    isRequestValid = (title, description, cost, userId) => {
+        return title && description && !isNaN(cost) && userId;
+    };
+
+    submit = () => {
+        if (this.isRequestValid(this.title, this.description, this.cost, this.userId)) {
             this.setState({message: ''});
-            let data = { title: this.title, description: this.description, cost: this.cost, sellerId: this.sellerId};
-            let url = `http://${process.env['REACT_APP_SERVER_HOST']}:${process.env['REACT_APP_SERVER_PORT']}/add`;
-            console.log(`Sending POST to ${url} with payload ${JSON.stringify(data)}`);
-            fetch(url, {
-                method: 'POST',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify(data)
-            })
+
+            let data = { title: this.title, description: this.description, cost: this.cost, userId: this.userId};
+            post(this, '/add', data)
                 .then(response => {
                     if (response.status === 201) {
                         this.setState({message: "Post created"});
@@ -54,10 +55,11 @@ class AddPost extends Component {
                         this.setState({message: "Request failed"});
                         console.log(response);
                     }
-                }).catch(r => {
+                }).catch(err => {
                     this.setState({message: "Request failed"});
-                    console.log(r);
-            });
+                    console.log(err);
+                }
+            );
         }
         else {
             this.setState({message: "All fields must not be null and amount must be a number."});
@@ -67,26 +69,30 @@ class AddPost extends Component {
     render() {
         return(
             <div>
+                <LinkBar />
                 <h1>Add Post</h1>
                 <div>
-                    <Link to="/SellerHome">My Posts</Link>
+                    <Link to="/MyPosts">My Posts</Link>
                 </div>
                 <TextInputComponent
                     label={"Title: "}
                     logChange={this.titleChange}
                 />
                 <TextInputComponent
-                    label={"Price: "}
+                    label={"Cost: "}
                     logChange={this.costChange}/>
                 <TextAreaComponent
                     label={"Description: "}
                     logChange={this.descriptionChange}/>
+                <TextInputComponent
+                    label={"User id: "}
+                    logChange={this.userIdChange}/>
                 <ImageDragDropComponent />
                 <TextOutputComponent
                     text={this.state.message}/>
                 <ButtonComponent
                     label={"Submit"}
-                    isPressed={this.submitting} />
+                    onClick={this.submit} />
             </div>
         );
     }

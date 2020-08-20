@@ -6,13 +6,11 @@ import './App.css';
 import GenericComponent from './components/GenericComponent'
 
 // pages
-import Overview from './pages/Overview'
 import HomePage from './pages/HomePage'
 import AddPost from './pages/AddPost'
-import NotFound from './pages/404Page'
+import NotFound from './pages/NotFound'
 import Login from './pages/Login'
-import BuyerHome from './pages/BuyerHome'
-import SellerHome from './pages/SellerHome'
+import MyPosts from './pages/MyPosts'
 import EditPost from './pages/EditPost'
 import Favorites from './pages/Favorites'
 import Search from './pages/Search'
@@ -23,19 +21,18 @@ class App extends Component {
     return(
     	<Router>
     		<Switch>
-                <Route exact path="/" component={Overview} />
+                <Route exact path="/" component={HomePage} />
                 <Route exact path="/Home" component={HomePage} />
     	    	<Route exact path="/Login" component={Login} />
-    	    	<Route exact path="/BuyerHome" component={BuyerHome} />
-    	    	<Route exact path="/SellerHome" component={SellerHome} />
+    	    	<Route exact path="/MyPosts" component={MyPosts} />
     	    	<Route exact path="/EditPost" component={EditPost} />
     	    	<Route exact path="/Favorites" component={Favorites} />
                 <Route exact path="/Search" component={Search} />
 
                 <Route exact path="/Post" component={Post} />
     			<Route exact path="/AddPost" component={AddPost} />
-    			<Route exact path = "/404" component={NotFound} />
-    			<Redirect to="/404"/>
+    			<Route exact path = "/NotFound" component={NotFound} />
+    			<Redirect to="/NotFound"/>
     		</Switch>
     	</Router>
     );

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import TextInputComponent from '../components/TextInputComponent'
 import ButtonComponent from '../components/ButtonComponent'
 import LinkBar from '../components/LinkBar'
@@ -41,25 +41,21 @@ class Search extends Component {
             }}>{data[i].title} - ${data[i].cost}</Link></div>);
         }
         return rows
-    }
+    };
 
     render() {
         return (
-
-        <div>
-            <LinkBar />
-            <h1> Search Page</h1>
-
-            <TextInputComponent label={"Find Item: "} />
-
-            <ButtonComponent
-                label={"Search"}
-                />
-
             <div>
-                    {this.searchList()}
+                <LinkBar />
+                <h1> Search Page</h1>
+                <TextInputComponent label={"Find Item: "} />
+                <ButtonComponent
+                    label={"Search"}
+                    />
+                <div>
+                        {this.searchList()}
+                </div>
             </div>
-        </div>
         );
     }
 }

@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
+import LinkBar from "../components/LinkBar";
 
 
 class NotFound extends Component {
   render() {
     return(
     	<div>
+            <LinkBar />
     		<h1>404 Page Not Found</h1>
     	</div>
     );
