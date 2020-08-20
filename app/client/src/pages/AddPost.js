@@ -1,89 +1,101 @@
 import React, {Component} from 'react';
-import { BrowserRouter as Router, Route, Switch, Link, Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import '../App.css';
 import TextInputComponent from '../components/TextInputComponent'
 import TextAreaComponent from '../components/TextAreaComponent'
 import ButtonComponent from '../components/ButtonComponent'
 import ImageDragDropComponent from '../components/ImageDragDropComponent'
-
-
-let description = '';
-let title = '';
-let cost = 0;
-let contact = '';
-
-function isNum(num) {
-    return !isNaN(num)
-}
+import TextOutputComponent from "../components/TextOutputComponent";
+import LinkBar from "../components/LinkBar";
+import {post} from "../request";
 
 class AddPost extends Component {
-    descriptionChange = (event) => {
-        description = event.target.value;
-        console.log(description);
+    constructor(props) {
+        super(props);
+        this.state = {
+            message: ''
+        };
+
+        this.description = '';
+        this.title = '';
+        this.cost = 0;
+        this.userId = props.userId;
     }
+
+    descriptionChange = (event) => {
+        this.description = event.target.value;
+    };
 
     titleChange = (event) => {
-        title = event.target.value;
-        console.log(title);
-    }
+        this.title = event.target.value;
+    };
 
     costChange = (event) => {
-        cost = event.target.value;
-        console.log(cost);
-    }
+        this.cost = event.target.value;
+    };
 
-    contactChange = (event) => {
-        contact = event.target.value;
-        console.log(contact);
-    }
+    userIdChange = (event) => {
+        this.userId = event.target.value;
+    };
 
-    //Output **********************************************************************************************************
-    submitting = (event) => {
-        if (isNum(cost)) {
-            console.log("submitting...");
-            let data = { description: description, title: title, cost: cost, contact: contact }
-            console.log(data);
+    isRequestValid = (title, description, cost, userId) => {
+        return title && description && !isNaN(cost) && userId;
+    };
+
+    submit = () => {
+        if (this.isRequestValid(this.title, this.description, this.cost, this.userId)) {
+            this.setState({message: ''});
+
+            let data = { title: this.title, description: this.description, cost: this.cost, userId: this.userId};
+            post(this, '/add', data)
+                .then(response => {
+                    if (response.status === 201) {
+                        this.setState({message: "Post created"});
+                    } else {
+                        this.setState({message: "Request failed"});
+                        console.log(response);
+                    }
+                }).catch(err => {
+                    this.setState({message: "Request failed"});
+                    console.log(err);
+                }
+            );
         }
         else {
-            console.log("cost is not valid");
+            this.setState({message: "All fields must not be null and amount must be a number."});
         }
+    };
 
-    }
-  render() {
-    return(
-        <div>
-
-            <h1>Add Post</h1>
+    render() {
+        return(
             <div>
-                <Link to="/SellerHome"> My Posts </Link>
-            </div>
-
-            <TextInputComponent
-                label={"Title: "}
-                logChange={this.titleChange}
+                <LinkBar />
+                <h1>Add Post</h1>
+                <div>
+                    <Link to="/MyPosts">My Posts</Link>
+                </div>
+                <TextInputComponent
+                    label={"Title: "}
+                    logChange={this.titleChange}
                 />
-
-            <TextInputComponent
-                label={"Price: "}
-                logChange={this.costChange}/>
-
-            <TextAreaComponent
-                label={"Description: "}
-                logChange={this.descriptionChange}/>
-
-            <ImageDragDropComponent />
-
-            <TextInputComponent
-                label={"Contact Info: "}
-                logChange={this.contactChange} />
-            
-            <ButtonComponent
-                label={"Submit"}
-                isPressed={this.submitting} />
-
-        </div>
-    );
-  }
+                <TextInputComponent
+                    label={"Cost: "}
+                    logChange={this.costChange}/>
+                <TextAreaComponent
+                    label={"Description: "}
+                    logChange={this.descriptionChange}/>
+                <TextInputComponent
+                    label={"User id: "}
+                    logChange={this.userIdChange}/>
+                <ImageDragDropComponent />
+                <TextOutputComponent
+                    text={this.state.message}/>
+                <ButtonComponent
+                    label={"Submit"}
+                    onClick={this.submit} />
+            </div>
+        );
+    }
 }
 
 export default AddPost;
