@@ -18,7 +18,6 @@ import Favorites from './pages/Favorites'
 import Search from './pages/Search'
 import Post from './pages/Post'
 
-
 class App extends Component {
   render() {
     return(

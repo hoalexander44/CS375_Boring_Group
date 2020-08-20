@@ -1,27 +1,18 @@
-CREATE USER 'backend'@'%' IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON *.* TO 'back'@'%' WITH GRANT OPTION;
-
-DROP SCHEMA IF EXISTS "shop";
+DROP SCHEMA IF EXISTS "shop" CASCADE;
 CREATE SCHEMA "shop";
+
+CREATE TABLE "shop"."user" (
+    "id" SERIAL PRIMARY KEY,
+    "username" VARCHAR(20) NOT NULL,
+    "password" VARCHAR(20) NOT NULL,
+    "email" VARCHAR(255) NOT NULL,
+    "favorite_item_ids" JSON NOT NULL
+);
 
 CREATE TABLE "shop"."item" (
     "id" SERIAL PRIMARY KEY,
     "name" VARCHAR(20) NOT NULL,
     "description" VARCHAR(1000) NOT NULL,
     "price" NUMERIC(2) NOT NULL,
-    "seller_id" REFERENCES "seller" ("id")
-);
-
-CREATE TABLE "shop"."buyer" (
-    "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(20) NOT NULL,
-    "favorite_item_ids" JSON DEFAULT "[]"
-);
-
-CREATE TABLE "shop"."seller" (
-    "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(20) NOT NULL,
-    "email": VARCHAR(255) NOT NULL,
-    "city": VARCHAR(255) NOT NULL,
-    "country": VARCHAR(255) NOT NULL
+    "seller_id" integer REFERENCES "shop"."user" ("id")
 );
