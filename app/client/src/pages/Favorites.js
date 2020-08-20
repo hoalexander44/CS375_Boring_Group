@@ -26,7 +26,6 @@ let data = [
 
 class Favorites extends Component {
     favoriteList = () => {
-
         let rows = [];
         for (var i = 0; i < data.length; i++) {
             rows.push(<div><Link to={{
@@ -44,18 +43,14 @@ class Favorites extends Component {
     }
 
     render() {
-
-    return(
-        <div>
-            <LinkBar />
-            <h1>Favorites Page</h1>
-
+        return(
             <div>
-                {this.favoriteList()}
+                <LinkBar />
+                <h1>Favorites</h1>
+                <div>
+                    {this.favoriteList()}
+                </div>
             </div>
-
-        </div>
-
     );
   }
 }
