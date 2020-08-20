@@ -12,7 +12,7 @@ class LinkBar extends Component {
                         <th><Link to="/Search"> Search </Link> </th>
                         <th><Link to="/Favorites"> Favorites </Link> </th>
                         <th><Link to="/AddPost"> Add Post </Link> </th>
-                        <th><Link to="/SellerHome"> Edit Post </Link> </th>
+                        <th><Link to="/SellerHome"> My Posts </Link> </th>
                     </tr>
                 </table>
             </div>

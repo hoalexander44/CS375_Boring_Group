@@ -53,10 +53,9 @@ class SellerHome extends Component {
       return (
           <div>
             <LinkBar />
-            <h1>Seller Home</h1>
-
             <div>
                 <h2> MY POSTS </h2>
+                <p> click on post to edit </p>
                 {this.editPostList()}
             </div>
         </div>
