@@ -109,22 +109,29 @@ WHERE u.id=$1`;
 //Searches for a post in the database
 app.get('/search', function(req, res){
     console.log(`Handling /search request with query ${JSON.stringify(req.query)}`);
-    let query = 'SELECT * FROM "shop"."item" WHERE description like  ';
+    let query = `SELECT * FROM "shop"."item" WHERE description like '%keyword%'`;
+    
+    let queryParams = [req.body.keyword]
+    
 });
 
 app.get('/getFavorite', function(req, res){
     console.log(`Handling /getFavorite request with query ${JSON.stringify(req.query)}`);
-    let query = '';
+    let query = 'SELECT * FROM "shop"."userFavorites" WHERE "user"."id" = "userFavorites"."user_id"';
 });
 
 app.get('/addFavorite', function(req,res){
     console.log(`Handling /addFavorite request with query ${JSON.stringify(req.query)}`);
-    let query = '';
+    let query = `INSERT INTO "shop"."userFavorites" ("user_id", "item_id") VALUES ($1, $2);`;
+    let queryParams = [req.body.userId, req.body.itemId];
+    
+    handleDbMutateRequest('/addFavorite', req.body, res, query, queryParams, 204);
+    
 });
 
 app.get('/deleteFavorite', function(req, res){
     console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.query)}`);
-    let query = '';
+    let query = 'DELETE FROM "shop"."userFavorites" WHERE "user"."id" = "userFavorites"."user_id" AND "item"."id" = "userFavorites"."item_id"';
 })
 
 app.listen(PORT, HOSTNAME, () => {
