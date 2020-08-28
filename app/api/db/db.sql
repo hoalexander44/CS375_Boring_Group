@@ -16,3 +16,8 @@ CREATE TABLE "shop"."item" (
     "cost" NUMERIC(2) NOT NULL,
     "user_id" integer REFERENCES "shop"."user" ("id")
 );
+
+CREATE TABLE "shop"."userFavorites" (
+  "user_id" INT REFERENCES user(id),
+  "item_id" INT REFERENCES item(id)
+); 

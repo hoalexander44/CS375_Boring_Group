@@ -65,6 +65,7 @@ VALUES
     handleDbMutateRequest('/add', req.body, res, query, queryParams, 201)
 });
 
+//Updates the title, description, and cost of a post
 app.post('/edit', function(req, res) {
     let query =
 `UPDATE "shop"."item"
@@ -76,6 +77,7 @@ WHERE "id"=$4`;
     handleDbMutateRequest('/edit', req.body, res, query, queryParams, 204);
 });
 
+//Deletes post from the database
 app.post('/delete', function(req, res) {
     let query =
 `DELETE FROM "shop"."item"
@@ -84,6 +86,7 @@ WHERE "id"=$1`;
     handleDbMutateRequest('/delete', req.body, res, query, queryParams, 204);
 });
 
+//Get posts created by the user
 app.get('/getPosts', function(req, res) {
     console.log(`Handling /getPosts request with query ${JSON.stringify(req.query)}`);
     let query =
@@ -102,6 +105,27 @@ WHERE u.id=$1`;
         }
     });
 });
+
+//Searches for a post in the database
+app.get('/search', function(req, res){
+    console.log(`Handling /search request with query ${JSON.stringify(req.query)}`);
+    let query = 'SELECT * FROM "shop"."item" WHERE description like  ';
+});
+
+app.get('/getFavorite', function(req, res){
+    console.log(`Handling /getFavorite request with query ${JSON.stringify(req.query)}`);
+    let query = '';
+});
+
+app.get('/addFavorite', function(req,res){
+    console.log(`Handling /addFavorite request with query ${JSON.stringify(req.query)}`);
+    let query = '';
+});
+
+app.get('/deleteFavorite', function(req, res){
+    console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.query)}`);
+    let query = '';
+})
 
 app.listen(PORT, HOSTNAME, () => {
     console.log(`Listening at: http://${HOSTNAME}:${PORT}`);
