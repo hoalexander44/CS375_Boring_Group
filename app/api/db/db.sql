@@ -11,9 +11,9 @@ CREATE TABLE "shop"."user" (
 
 CREATE TABLE "shop"."item" (
     "id" SERIAL PRIMARY KEY,
-    "title" VARCHAR(20) NOT NULL,
+    "title" VARCHAR(30) NOT NULL,
     "description" VARCHAR(1000) NOT NULL,
-    "cost" NUMERIC(2) NOT NULL,
+    "cost" BIGINT NOT NULL,
     "user_id" integer REFERENCES "shop"."user" ("id")
 );
 

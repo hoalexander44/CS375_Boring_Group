@@ -12,13 +12,43 @@ class EditPost extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: ''
+            message: '',
+            userId: "",
+            linkBar: null
         };
 
         this.description = '';
         this.title = '';
         this.cost = 0;
         this.itemId = props.itemId;
+    }
+
+    async componentDidMount() {
+        // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar
+        if (this.props.location.state !== undefined) {
+            console.log(this.props.location.state.userId)
+            await this.setState({ userId: this.props.location.state.userId })
+            let table = [];
+            table.push(
+                <LinkBar key="linkBar" userId={this.props.location.state.userId} />
+            )
+            await this.setState({ linkBar: table })
+
+            this.itemId = this.props.location.state.loadedItemId;
+            this.description = this.props.location.state.loadedDescription;
+            console.log("DESCRIPTION: " + this.description);
+            this.cost = this.props.location.state.loadedCost;
+            this.title = this.props.location.state.loadedTitle;
+        }
+        else {
+            this.props.history.push(
+                {
+                    pathname: "/"
+                }
+            );
+        }
+
+
     }
 
     descriptionChange = (event) => {
@@ -38,51 +68,77 @@ class EditPost extends Component {
     };
 
     submit = () => {
-        if (this.isRequestValid(this.title, this.description, this.cost, this.itemId)) {
-            this.setState({message: ''});
+        this.submitConnection();
+    };
 
-            let data = { title: this.title, description: this.description, cost: this.cost, itemId: this.itemId};
-            post(this, '/edit', data)
+    async submitConnection() {
+        if (this.isRequestValid(this.title, this.description, this.cost, this.itemId)) {
+            this.setState({ message: '' });
+
+            let data = { title: this.title, description: this.description, cost: this.cost, itemId: this.itemId };
+            await post(this, '/edit', data)
                 .then(response => {
                     if (response.status === 204) {
-                        this.setState({message: "Post edited"});
+                        this.setState({ message: "Post edited" });
                     } else {
-                        this.setState({message: "Request failed"});
+                        this.setState({ message: "Request failed" });
                         console.log(response);
                     }
                 }).catch(err => {
-                    this.setState({message: "Request failed"});
+                    this.setState({ message: "Request failed" });
                     console.log(err);
+                }
+            );
+            this.props.history.push(
+                {
+                    pathname: "/MyPosts",
+                    state: {
+                        userId: this.state.userId
+                    }
                 }
             );
         }
         else {
-            this.setState({message: "All fields must not be null and amount must be a number."});
+            this.setState({ message: "All fields must not be null and amount must be a number." });
         }
-    };
+    }
 
     delete = () => {
-        this.setState({message: ''});
+        this.deleteConnection();
+    };
 
-        post(this, '/delete', {'itemId':`${this.props.location.state.loadedItemId}`})
+    async deleteConnection() {
+        this.setState({ message: '' });
+
+        await post(this, '/delete', { 'itemId': `${this.props.location.state.loadedItemId}` })
             .then(response => {
                 if (response.status === 204) {
-                    this.setState({message: "Post deleted"});
+                    this.setState({ message: "Post deleted" });
                 } else {
-                    this.setState({message: "Request failed"});
+                    this.setState({ message: "Request failed" });
                     console.log(response);
                 }
             }).catch(err => {
-                this.setState({message: "Request failed"});
+                this.setState({ message: "Request failed" });
                 console.log(err);
             }
         );
-    };
+
+        this.props.history.push(
+            {
+                pathname: "/MyPosts",
+                state: {
+                    userId: this.state.userId
+                }
+
+            }
+        );
+    }
 
     render() {
         return(
             <div>
-                <LinkBar />
+                {this.state.linkBar}
                 <h1>Edit Post</h1>
                 <TextInputComponent
                     label={"Title: "}

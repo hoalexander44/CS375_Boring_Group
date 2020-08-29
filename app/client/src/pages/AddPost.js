@@ -13,13 +13,37 @@ class AddPost extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: ''
+            message: '',
+            userId: "",
+            linkBar: null
         };
 
         this.description = '';
         this.title = '';
         this.cost = 0;
-        this.userId = props.userId;
+        //this.userId = props.userId;
+    }
+
+    async componentDidMount() {
+
+        // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar
+        if (this.props.location.state !== undefined) {
+            console.log(this.props.location.state.userId)
+            await this.setState({ userId: this.props.location.state.userId })
+            let table = [];
+            table.push(
+                <LinkBar key="linkBar" userId={this.props.location.state.userId} />
+            )
+            await this.setState({ linkBar: table })
+        }
+        else {
+            this.props.history.push(
+                {
+                    pathname: "/"
+                }
+            );
+        }
+
     }
 
     descriptionChange = (event) => {
@@ -42,34 +66,52 @@ class AddPost extends Component {
         return title && description && !isNaN(cost) && userId;
     };
 
-    submit = () => {
-        if (this.isRequestValid(this.title, this.description, this.cost, this.userId)) {
-            this.setState({message: ''});
 
-            let data = { title: this.title, description: this.description, cost: this.cost, userId: this.userId};
-            post(this, '/add', data)
+    submit = () => {
+        this.submitConnection();
+    };
+
+    async submitConnection() {
+        if (this.isRequestValid(this.title, this.description, this.cost, this.userId)) {
+            this.setState({ message: '' });
+
+            let data = { title: this.title, description: this.description, cost: this.cost, userId: this.state.userId }; // change for later when we have login
+
+            await post(this, '/add', data)
                 .then(response => {
                     if (response.status === 201) {
-                        this.setState({message: "Post created"});
+                        this.setState({ message: "Post created" });
                     } else {
-                        this.setState({message: "Request failed"});
+                        this.setState({ message: "Request failed" });
                         console.log(response);
                     }
                 }).catch(err => {
-                    this.setState({message: "Request failed"});
+                    this.setState({ message: "Request failed" });
                     console.log(err);
                 }
+                );
+
+            this.props.history.push(
+                {
+                    pathname: "/MyPosts",
+                    state: {
+                        userId: this.state.userId
+                    }
+                }
             );
+
+
         }
         else {
-            this.setState({message: "All fields must not be null and amount must be a number."});
+            this.setState({ message: "All fields must not be null and amount must be a number." });
         }
-    };
+    }
+
 
     render() {
         return(
             <div>
-                <LinkBar />
+                {this.state.linkBar}
                 <h1>Add Post</h1>
                 <div>
                     <Link to="/MyPosts">My Posts</Link>
