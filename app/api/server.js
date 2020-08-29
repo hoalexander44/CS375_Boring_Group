@@ -131,7 +131,10 @@ app.get('/addFavorite', function(req,res){
 
 app.get('/deleteFavorite', function(req, res){
     console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.query)}`);
-    let query = 'DELETE FROM "shop"."userFavorites" WHERE "user"."id" = "userFavorites"."user_id" AND "item"."id" = "userFavorites"."item_id"';
+    let query = `DELETE FROM "shop"."userFavorites" WHERE "userFavorites"."user_id" = $1 AND "userFavorites"."item_id" = $2`;
+    let queryParams = [req.body.userId, req.body.itemId];
+    
+    handleDbMutateRequest('/deleteFavorite', req.body, res, query, queryParams, 204);
 })
 
 app.listen(PORT, HOSTNAME, () => {
