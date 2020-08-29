@@ -111,16 +111,39 @@ app.get('/search', function(req, res){
     console.log(`Handling /search request with query ${JSON.stringify(req.query)}`);
     let query = `SELECT * FROM "shop"."item" WHERE description like '%keyword%'`;
     
-    let queryParams = [req.body.keyword]
+    pool.query(query, [req.body.keyword], (err, db_res) => {
+        if (err){
+            console.log(err.stack);
+            res.status(500).send({error: "Failed to get from database."});
+        }
+        else{
+            res.json(db_res.rows);
+        }
+    })
     
+    handleDbMutateRequest('/search', req.body, res, query, queryParams, 204);
 });
 
 app.get('/getFavorite', function(req, res){
     console.log(`Handling /getFavorite request with query ${JSON.stringify(req.query)}`);
-    let query = 'SELECT * FROM "shop"."userFavorites" WHERE "user"."id" = "userFavorites"."user_id"';
+    let query = `SELECT * FROM "shop"."userFavorites" WHERE "userFavorites"."user_id" = $1`;
+    
+    let queryParams = [req.body.userId];
+    
+    pool.query(query, [req.body.userId], (err, db_res) => {
+        if(err){
+            console.log(err.stack);
+            res.status(500).send({error: "Failed to get from the database."});
+        }
+        else{
+            res.json(db_res.rows);
+        }
+    })
+    
+    handleDbMutateRequest('/getFavorite', req.body, res, query, queryParams, 204);
 });
 
-app.get('/addFavorite', function(req,res){
+app.post('/addFavorite', function(req,res){
     console.log(`Handling /addFavorite request with query ${JSON.stringify(req.query)}`);
     let query = `INSERT INTO "shop"."userFavorites" ("user_id", "item_id") VALUES ($1, $2);`;
     let queryParams = [req.body.userId, req.body.itemId];
@@ -129,7 +152,7 @@ app.get('/addFavorite', function(req,res){
     
 });
 
-app.get('/deleteFavorite', function(req, res){
+app.post('/deleteFavorite', function(req, res){
     console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.query)}`);
     let query = `DELETE FROM "shop"."userFavorites" WHERE "userFavorites"."user_id" = $1 AND "userFavorites"."item_id" = $2`;
     let queryParams = [req.body.userId, req.body.itemId];
