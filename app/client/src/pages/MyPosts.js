@@ -46,12 +46,8 @@ class MyPosts extends Component {
 
     async getPostConnection() {
         // Gets user posts
-        let response = await fetch("http://localhost:3001/getPosts?userId=" + this.state.userId, {
-            method: "Get",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).catch(error => {
+
+        let response = await get(this, '/getPosts?userId=' + this.state.userId).catch(error => {
             this.setState({ message: "Request failed", postList: [] });
             return;
         })

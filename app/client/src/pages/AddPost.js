@@ -77,7 +77,6 @@ class AddPost extends Component {
 
             let data = { title: this.title, description: this.description, cost: this.cost, userId: this.state.userId }; // change for later when we have login
 
-
             await post(this, '/add', data)
                 .then(response => {
                     if (response.status === 201) {
