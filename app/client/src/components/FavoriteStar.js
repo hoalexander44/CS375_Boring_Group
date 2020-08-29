@@ -8,35 +8,17 @@ let SelectImage = './images/Star_Selected.png';
 let isSelected = false;
 
 class FavoriteStar extends Component {
-    initialButton(){
-        if (this.props.isFavorite) {
-            isSelected = true;
-            return "favorite";
-        }
-        else {
-            isSelected = false;
-            return "unfavorite";
-        }
-    }
 
     changeButton = (event) => {
-        if (isSelected) {
-            event.target.className = "unfavorite";
-            isSelected = false;
-            console.log("UnFavorited");
-        }
-        else {
-           event.target.className = "favorite";
-            isSelected = true;
-            console.log("Favorited");
-        }
+        this.props.onPress();
     }
+
 
     render() {
         return (
-            <div className={this.initialButton()} onClick={this.changeButton}>
+            <div className={this.props.favoriteClass} onClick={this.changeButton}>
             </div>
-        )
+            )
         }
 }
 

@@ -111,20 +111,74 @@ WHERE u.id=$1`;
 //Searches for a post in the database
 app.get('/search', function(req, res){
     console.log(`Handling /search request with query ${JSON.stringify(req.query)}`);
-    let query = `SELECT * FROM "shop"."item" WHERE description like '%keyword%'`;
-    
-    pool.query(query, [req.query.keyword], (err, db_res) => {
+    let query = `SELECT * FROM "shop"."item" WHERE title like $1`;
+
+    let keyword = '%' + req.query.keyword + '%';
+    pool.query(query, [keyword], (err, db_res) => {
         if (err){
             console.log(err.stack);
             res.status(500).send({error: "Failed to get from database."});
         }
-        else{
+        else {
+
+            console.log(db_res.rows);
             res.json(db_res.rows);
+
+
         }
     })
     
     //handleDbMutateRequest('/search', req.body, res, query, queryParams, 204);
 });
+
+
+//sees if post is favorited by the user
+// takes userId
+// takes itemId
+app.get('/isFavorite', function (req, res) {
+    let query = 'SELECT * FROM "shop"."userFavorites" WHERE user_id=$1 AND item_id=$2';
+    let queryParams = [req.query.userId, req.query.itemId];
+
+    pool.query(query, queryParams, (err, db_res) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(500).send({ error: "Failed to get from database." });
+        }
+        else {
+            if (db_res.rows.length > 0) {
+                console.log("Item is favorited");
+                let data = {isFavorite: true};
+                res.json(data);
+            }
+            else {
+                console.log("Item is not favorited");
+                let data = { isFavorite: false };
+                res.json(data);
+            }
+            
+        }
+    });
+});
+
+
+
+app.get('/getEmail', function (req, res) {
+    let query = 'SELECT email FROM "shop"."user" WHERE "id" = $1'
+    let queryParams = [req.query.userId];
+
+    pool.query(query, queryParams, (err, db_res) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(500).send({ error: "Failed to get from the database." });
+        }
+        else {
+            console.log(db_res.rows);
+            res.json(db_res.rows);
+        }
+    });
+
+});
+
 
 app.get('/getFavorite', function(req, res){
     console.log(`Handling /getFavorite request with query ${JSON.stringify(req.query)}`);
@@ -137,8 +191,31 @@ app.get('/getFavorite', function(req, res){
             console.log(err.stack);
             res.status(500).send({error: "Failed to get from the database."});
         }
-        else{
-            res.json(db_res.rows);
+        else {
+
+            // Getting item information from shop item table
+            //res.json(db_res.rows);
+            let itemRows = [];
+            for (let i = 0; i < db_res.rows.length; i++) {
+                console.log(`Handling /getFavorite request getting item information after gettings favorite ids`);
+                let query = `SELECT * FROM "shop"."item" WHERE "id" = $1`;
+                pool.query(query, [db_res.rows[i].item_id], (err, item_res) => {
+                    if (err) {
+                        console.log(err.stack);
+                        res.status(500).send({ error: "Failed to get from the database." });
+                    }
+                    else {
+                        itemRows.push(item_res.rows);
+                        if (i >= (db_res.rows.length - 1)) {
+                            let returnData = { "favorite_items": itemRows };
+                            res.json(returnData);
+                            return
+                        }
+                    }
+                });
+
+
+            }
         }
     })
     

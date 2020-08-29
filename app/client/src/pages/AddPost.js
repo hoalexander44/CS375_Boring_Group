@@ -58,12 +58,12 @@ class AddPost extends Component {
         this.cost = event.target.value;
     };
 
-    userIdChange = (event) => {
-        this.userId = event.target.value;
-    };
+    //userIdChange = (event) => {
+    //    this.userId = event.target.value;
+    //};
 
-    isRequestValid = (title, description, cost, userId) => {
-        return title && description && !isNaN(cost) && userId;
+    isRequestValid = (title, description, cost) => {
+        return title && description && !isNaN(cost);
     };
 
 
@@ -72,7 +72,7 @@ class AddPost extends Component {
     };
 
     async submitConnection() {
-        if (this.isRequestValid(this.title, this.description, this.cost, this.userId)) {
+        if (this.isRequestValid(this.title, this.description, this.cost)) {
             this.setState({ message: '' });
 
             let data = { title: this.title, description: this.description, cost: this.cost, userId: this.state.userId }; // change for later when we have login
@@ -126,9 +126,6 @@ class AddPost extends Component {
                 <TextAreaComponent
                     label={"Description: "}
                     logChange={this.descriptionChange}/>
-                <TextInputComponent
-                    label={"User id: "}
-                    logChange={this.userIdChange}/>
                 <ImageDragDropComponent />
                 <TextOutputComponent
                     text={this.state.message}/>
