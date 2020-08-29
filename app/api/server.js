@@ -49,6 +49,7 @@ function handleDbMutateRequest(endpoint, reqBody, res, query, queryParams, succe
             if (db_res.rowCount === 0) {
                 res.status(400).send({error:"No rows were updated"})
             } else {
+                console.log("SUCCESS MUTATE");
                 res.sendStatus(successStatusCode);
             }
         }
@@ -73,7 +74,7 @@ SET "title"=$1,
     "description"=$2,
     "cost"=$3
 WHERE "id"=$4`;
-    let queryParams = [req][req.body.title, req.body.description, req.body.cost, req.body.itemId];
+    let queryParams = [req.body.title, req.body.description, req.body.cost, req.body.itemId];
     handleDbMutateRequest('/edit', req.body, res, query, queryParams, 204);
 });
 
@@ -101,6 +102,7 @@ WHERE u.id=$1`;
             console.log(err.stack);
             res.status(500).send({error: "Failed to get from database."});
         } else {
+            console.log(db_res.rows);
             res.json(db_res.rows);
         }
     });

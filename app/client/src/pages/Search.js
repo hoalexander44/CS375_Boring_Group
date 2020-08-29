@@ -25,6 +25,36 @@ let data = [
 
 
 class Search extends Component {
+    constructor() {
+        super();
+        this.state = {
+            username: "",
+            linkBar: null,
+        };
+    }
+
+    async componentDidMount() {
+
+        // setups a barrier where you must login to enter. Also keeps track of the username through the link bar
+        if (this.props.location.state !== undefined) {
+            console.log(this.props.location.state.username)
+            await this.setState({ username: this.props.location.state.username })
+            let table = [];
+            table.push(
+                <LinkBar key="linkBar" username={this.props.location.state.username} />
+            )
+            await this.setState({ linkBar: table })
+        }
+        else {
+            this.props.history.push(
+                {
+                    pathname: "/"
+                }
+            );
+        }
+
+    }
+
     searchList = () => {
 
         let rows = [];
@@ -46,7 +76,7 @@ class Search extends Component {
     render() {
         return (
             <div>
-                <LinkBar />
+                {this.state.linkBar}
                 <h1> Search Page</h1>
                 <TextInputComponent label={"Find Item: "} />
                 <ButtonComponent
