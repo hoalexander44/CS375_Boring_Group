@@ -18,6 +18,6 @@ CREATE TABLE "shop"."item" (
 );
 
 CREATE TABLE "shop"."userFavorites" (
-  "user_id" INT REFERENCES "shop"."user"("id"),
-  "item_id" INT REFERENCES "shop"."item"("id")
+  "user_id" INT REFERENCES "shop"."user" ("id"),
+  "item_id" INT REFERENCES "shop"."item" ("id")
 ); 
