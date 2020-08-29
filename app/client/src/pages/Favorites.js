@@ -28,20 +28,20 @@ class Favorites extends Component {
     constructor() {
         super();
         this.state = {
-            username: "",
+            userId: "",
             linkBar: null,
         };
     }
 
     async componentDidMount() {
 
-        // setups a barrier where you must login to enter. Also keeps track of the username through the link bar (which is the main mode of navigation)
+        // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar (which is the main mode of navigation)
         if (this.props.location.state !== undefined) {
-            console.log(this.props.location.state.username)
-            await this.setState({ username: this.props.location.state.username })
+            console.log(this.props.location.state.userId)
+            await this.setState({ userId: this.props.location.state.userId })
             let table = [];
             table.push(
-                <LinkBar key="linkBar" username={this.props.location.state.username} />
+                <LinkBar key="linkBar" userId={this.props.location.state.userId} />
             )
             await this.setState({ linkBar: table })
         }

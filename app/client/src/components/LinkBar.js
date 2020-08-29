@@ -6,15 +6,15 @@ class LinkBar extends Component {
     constructor() {
         super();
         this.state = {
-            username: ""
+            userId: ""
         };
     }
 
     async componentDidMount() {
-        console.log("LINK BAR's USERNMAE: " + this.props.username);
-        this.setState({ username: this.props.username });
-        //console.log(this.props.location.state.username)
-        //await this.setState({ username: this.props.location.state.username })
+        console.log("LINK BAR's USERNMAE: " + this.props.userId);
+        this.setState({ userId: this.props.userId });
+        //console.log(this.props.location.state.userId)
+        //await this.setState({ userId: this.props.location.state.userId })
     }
 
     render() {
@@ -26,25 +26,25 @@ class LinkBar extends Component {
                             <th><Link
                                 to={{
                                     pathname: "/Home",
-                                    state: { username: this.props.username }
+                                    state: { userId: this.props.userId }
                                 }}> Home </Link></th>
 
                             <th><Link
                                 to={{
                                     pathname: "/MyPosts",
-                                    state: { username: this.props.username }
+                                    state: { userId: this.props.userId }
                                 }}> My Posts </Link></th>
 
                             <th><Link
                                 to={{
                                     pathname: "/Favorites",
-                                    state: { username: this.props.username }
+                                    state: { userId: this.props.userId }
                                 }}> Favorites </Link></th>
 
                             <th><Link
                                 to={{
                                     pathname: "/Search",
-                                    state: { username: this.props.username }
+                                    state: { userId: this.props.userId }
                                 }}> Search </Link></th>
                             <th><Link
                                 to={{

@@ -11,7 +11,7 @@ class Login extends Component {
             {
                 pathname: "/Home",
                 state: {
-                    username: 1,
+                    userId: 1,
                 }
             }
         );

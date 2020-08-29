@@ -7,24 +7,24 @@ import TextOutputComponent from "../components/TextOutputComponent";
 class MyPosts extends Component {
     constructor(props) {
         super(props);
-        this.userId = 1; // TODO
+        //this.userId = 1; // TODO
         this.state = {
             message: '',
             postList: [],
-            username: "",
+            userId: "",
             linkBar: null
         }
     }
 
 
     async componentDidMount() {
-        // setups a barrier where you must login to enter. Also keeps track of the username through the link bar (which is the main mode of navigation)
+        // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar (which is the main mode of navigation)
         if (this.props.location.state !== undefined) {
-            console.log(this.props.location.state.username)
-            await this.setState({ username: this.props.location.state.username })
+            console.log(this.props.location.state.userId)
+            await this.setState({ userId: this.props.location.state.userId })
             let table = [];
             table.push(
-                <LinkBar key="linkBar" username={this.props.location.state.username} />
+                <LinkBar key="linkBar" userId={this.props.location.state.userId} />
             )
             await this.setState({ linkBar: table })
 
@@ -46,7 +46,7 @@ class MyPosts extends Component {
 
     async getPostConnection() {
         // Gets user posts
-        let response = await fetch("http://localhost:3001/getPosts?userId=" + this.userId, {
+        let response = await fetch("http://localhost:3001/getPosts?userId=" + this.state.userId, {
             method: "Get",
             headers: {
                 "Content-Type": "application/json"
@@ -72,7 +72,7 @@ class MyPosts extends Component {
                         loadedCost: getPostsResponseJson[i].cost,
                         loadedDescription: getPostsResponseJson[i].description,
                         loadedContactInfo: getPostsResponseJson[i].contact,
-                        username: this.state.username
+                        userId: this.state.userId
                     }
                 }}>{title} ${cost}</Link></div>)
             }
@@ -102,8 +102,7 @@ class MyPosts extends Component {
                     to={{
                         pathname: "/AddPost",
                         state: {
-                            userId: 1,
-                            username: this.state.username
+                            userId: this.state.userId
                         }
                     }}>Add post</Link>
             </div>
