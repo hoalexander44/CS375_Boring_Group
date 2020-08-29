@@ -111,7 +111,7 @@ app.get('/search', function(req, res){
     console.log(`Handling /search request with query ${JSON.stringify(req.query)}`);
     let query = `SELECT * FROM "shop"."item" WHERE description like '%keyword%'`;
     
-    pool.query(query, [req.body.keyword], (err, db_res) => {
+    pool.query(query, [req.query.keyword], (err, db_res) => {
         if (err){
             console.log(err.stack);
             res.status(500).send({error: "Failed to get from database."});
@@ -121,16 +121,16 @@ app.get('/search', function(req, res){
         }
     })
     
-    handleDbMutateRequest('/search', req.body, res, query, queryParams, 204);
+    //handleDbMutateRequest('/search', req.body, res, query, queryParams, 204);
 });
 
 app.get('/getFavorite', function(req, res){
     console.log(`Handling /getFavorite request with query ${JSON.stringify(req.query)}`);
-    let query = `SELECT * FROM "shop"."userFavorites" WHERE "userFavorites"."user_id" = $1`;
+    let query = `SELECT * FROM "shop"."userFavorites" WHERE "user_id" = $1`;
     
-    let queryParams = [req.body.userId];
+    let queryParams = [req.query.userId];
     
-    pool.query(query, [req.body.userId], (err, db_res) => {
+    pool.query(query, [req.query.userId], (err, db_res) => {
         if(err){
             console.log(err.stack);
             res.status(500).send({error: "Failed to get from the database."});
@@ -140,11 +140,13 @@ app.get('/getFavorite', function(req, res){
         }
     })
     
-    handleDbMutateRequest('/getFavorite', req.body, res, query, queryParams, 204);
+    //handleDbMutateRequest('/getFavorite', req.body, res, query, queryParams, 204);
 });
 
 app.post('/addFavorite', function(req,res){
-    console.log(`Handling /addFavorite request with query ${JSON.stringify(req.query)}`);
+    console.log(`Handling /addFavorite request with query ${JSON.stringify(req.body)}`);
+    //console.log(req.body.userId);
+    //console.log(req.body.itemId);
     let query = `INSERT INTO "shop"."userFavorites" ("user_id", "item_id") VALUES ($1, $2);`;
     let queryParams = [req.body.userId, req.body.itemId];
     
@@ -153,7 +155,7 @@ app.post('/addFavorite', function(req,res){
 });
 
 app.post('/deleteFavorite', function(req, res){
-    console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.query)}`);
+    console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.body)}`);
     let query = `DELETE FROM "shop"."userFavorites" WHERE "userFavorites"."user_id" = $1 AND "userFavorites"."item_id" = $2`;
     let queryParams = [req.body.userId, req.body.itemId];
     
