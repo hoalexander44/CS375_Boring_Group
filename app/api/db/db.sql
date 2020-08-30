@@ -4,9 +4,9 @@ CREATE SCHEMA "shop";
 CREATE TABLE "shop"."user" (
     "id" SERIAL PRIMARY KEY,
     "username" VARCHAR(20) NOT NULL,
-    "password" VARCHAR(20) NOT NULL,
+    "password" CHAR(60) NOT NULL,
     "email" VARCHAR(255) NOT NULL,
-    "favorite_item_ids" JSON NOT NULL
+    "favorite_item_ids" JSON NULL
 );
 
 CREATE TABLE "shop"."item" (

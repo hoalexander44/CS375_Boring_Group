@@ -15,6 +15,7 @@ import EditPost from './pages/EditPost'
 import Favorites from './pages/Favorites'
 import Search from './pages/Search'
 import Post from './pages/Post'
+import Register from './pages/Register'
 
 class App extends Component {
   render() {
@@ -23,7 +24,8 @@ class App extends Component {
     		<Switch>
                 <Route exact path="/" component={Login} />
                 <Route exact path="/Home" component={HomePage} />
-    	    	<Route exact path="/Login" component={Login} />
+                <Route exact path="/Login" component={Login} />
+                <Route exact path="/Register" component={Register} />
     	    	<Route exact path="/MyPosts" component={MyPosts} />
     	    	<Route exact path="/EditPost" component={EditPost} />
     	    	<Route exact path="/Favorites" component={Favorites} />

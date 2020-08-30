@@ -8,12 +8,13 @@ import { post } from "../request";
 
 let username = '';
 let password = '';
+let email = '';
 
 class Login extends Component {
     constructor() {
         super();
         this.state = {
-            isLoginWrong: false
+            registerMessage: ''
         };
     }
 
@@ -32,33 +33,31 @@ class Login extends Component {
         //console.log(password);
     }
 
-    login = (event) => {
-        //console.log("hello?");
-        this.requestLogin();
+    emailChange = (event) => {
+        email = event.target.value;
+        //console.log(email);
     }
 
-    async requestLogin() {
-        let sendUsername = username;
+    postRegister = (event) => {
+        this.registerConnection();
+    }
 
-        let data = {"username": username, "password": password}
-        let response = await post(this, '/auth', data)
-        if (response.status === 200) {
-            let responseJson = await response.json();
-            console.log("RESPONSE RESPONSE");
-            console.log(responseJson);
-            this.props.history.push(
-                {
-                    pathname: "/Home",
-                    state: {
-                        userId: responseJson.userId,
-                    }
-                }
-            );
+    async registerConnection() {
+        let data = {
+            username: username,
+            password: password,
+            email: email
         }
-        else {
-            this.setState({ isLoginWrong: true });
-            console.log("authentication failure");
+
+        let response = await await post(this, '/user', data)
+
+        if (response.status === 200) {
+            console.log("Success");
+            this.setState({ registerMessage: "REGISTERED!" })
+        } else {
+            console.log("Failure");
             console.log(response);
+            this.setState({ registerMessage: "Registration failed" })
         }
     }
 
@@ -67,16 +66,15 @@ class Login extends Component {
     return(
         <div>
             <div className>
-                <h1>LOGIN</h1>
+                <h1>REGISTER</h1>
                 <TextInputComponent label="Username: " logChange={this.usernameChange} />
+                <TextInputComponent label="Email: " logChange={this.emailChange} />
                 <InputPasswordComponent type="password" label="Password: " logChange={this.passwordChange} />
-                <ButtonComponent label="Login" onClick={this.login} />
-                {
-                    this.state.isLoginWrong
-                        ? <h3>Incorrect Username or Password</h3>
-                        : <p></p>
-                }
-                <Link to="/Register"> Register </Link>
+                <ButtonComponent label="Register" onClick={this.postRegister} />
+                <div>
+                    {this.state.registerMessage}
+                </div>
+                <Link to="/"> Back to login </Link>
 
 
 

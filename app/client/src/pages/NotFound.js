@@ -6,7 +6,6 @@ class NotFound extends Component {
   render() {
     return(
     	<div>
-            <LinkBar />
     		<h1>404 Page Not Found</h1>
     	</div>
     );

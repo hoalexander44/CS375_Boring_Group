@@ -10,11 +10,11 @@
     "cookie-parser": "~1.4.4",
     "cors": "^2.8.5",
     "debug": "~2.6.9",
+    "dotenv": "latest",
     "express": "^4.16.4",
     "http-errors": "~1.6.3",
     "morgan": "~1.9.1",
-    "pg": "^8.3.2",
-    "dotenv": "latest"
+    "pg": "^8.3.2"
   },
   "main": "server.js",
   "devDependencies": {},
