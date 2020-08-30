@@ -12,6 +12,7 @@ class Post extends Component {
         super();
         this.state = {
             userId: "",
+            sellerId: "",
             isFavorite: false, //TODO
             linkBar: null,
             email: ''
@@ -23,7 +24,8 @@ class Post extends Component {
         // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar
         if (this.props.location.state !== undefined) {
             console.log(this.props.location.state.userId)
-            await this.setState({ userId: this.props.location.state.userId })
+            await this.setState({ userId: this.props.location.state.userId });
+            await this.setState({ sellerId: this.props.location.state.seller_id });
             let table = [];
             table.push(
                 <LinkBar key="linkBar" userId={this.props.location.state.userId} />
@@ -56,7 +58,7 @@ class Post extends Component {
     }
 
     async getEmail() {
-        let response = await get(this, '/getEmail?userId=' + this.state.userId).catch(error => {
+        let response = await get(this, '/getEmail?userId=' + this.state.sellerId).catch(error => {
             this.setState({ message: "Request failed", postList: [] });
             return;
         })

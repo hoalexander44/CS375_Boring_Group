@@ -1,8 +1,10 @@
 const dotenv = require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const bcrypt = require("bcrypt");
 const { Pool, Client } = require('pg');
 
+const saltRounds = 10;
 const PORT = 3001;
 const HOSTNAME = 'localhost';
 
@@ -246,6 +248,123 @@ app.post('/deleteFavorite', function(req, res){
     
     handleDbMutateRequest('/deleteFavorite', req.body, res, query, queryParams, 204);
 })
+
+//register
+//register
+app.post("/user", function (req, res) {
+
+    console.log("reached1");
+    let input = true;
+    let username = req.body.username;
+    let plaintextPassword = req.body.password;
+    let email = req.body.email;
+
+    console.log(plaintextPassword);
+    if (username !== undefined & plaintextPassword !== undefined & email !== undefined) {
+        console.log("reached2");
+        if (((typeof username) == "string") &
+            ((typeof plaintextPassword) == "string") &
+            username.length >= 1 &
+            username.length <= 20 &
+            email.length >= 1 &
+            email.length <= 20 &
+            plaintextPassword.length >= 5 &
+            plaintextPassword.length <= 36
+
+        ) {
+            console.log("reached2");
+            pool.query(
+                `SELECT username FROM "shop"."user"`
+            ).then(function (response) {
+                console.log(response.rows);
+                for (let i = 0; i < response.rows.length; i++) {
+                    console.log(response.rows[i]["username"]);
+                    if (response.rows[i]["username"] == username) {
+                        console.log("account already exists");
+                        input = false;
+                        //console.log("CAN INPUT inside??: " + input);
+                        console.log("reached3");
+                        res.status(401).send();
+                        return;
+                    }
+                }
+                //console.log("CAN INPUT outside??: " + input);
+                if (input) {
+                    console.log("reached4");
+                    bcrypt
+                        .hash(plaintextPassword, saltRounds)
+                        .then(function (hashedPassword) {
+                            pool.query(
+                                'INSERT INTO "shop"."user" (username, password, email) VALUES ($1, $2, $3)',
+                                [username, hashedPassword, email]
+                            )
+                                .then(function (response) {
+                                    // account successfully created
+                                    res.status(200).send();
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                    res.status(500).send(); // server error
+                                });
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                            res.status(500).send(); // server error
+                        });
+                }
+            });
+
+        }
+        else {
+            console.log("go away");
+            res.status(401).send();
+        }
+    }
+    else {
+        console.log("go away");
+        res.status(401).send();
+    }
+
+});
+
+
+app.post("/auth", function (req, res) {
+    let username = req.body.username;
+    let plaintextPassword = req.body.password;
+    pool.query(`SELECT password, id FROM "shop"."user" WHERE username = $1`, [
+        username,
+    ])
+        .then(function (response) {
+            if (response.rows.length === 0) {
+                // username doesn't exist
+                return res.status(401).send();
+            }
+            let hashedPassword = response.rows[0].password;
+            bcrypt
+                .compare(plaintextPassword, hashedPassword)
+                .then(function (isSame) {
+                    if (isSame) {
+                        // password matched
+                        console.log("YAY!");
+                        console.log(response.rows[0].id);
+                        res.status(200);
+                        res.json({ userId: response.rows[0].id})
+                    } else {
+                        // password didn't match
+                        res.status(401).send();
+                    }
+                })
+                .catch(function (error) {
+                    console.log(error);
+                    res.status(500).send(); // server error
+                });
+        })
+        .catch(function (error) {
+            console.log(error);
+            res.status(500).send(); // server error
+        });
+});
+
 
 app.listen(PORT, HOSTNAME, () => {
     console.log(`Listening at: http://${HOSTNAME}:${PORT}`);
