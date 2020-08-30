@@ -2,24 +2,11 @@ import React, {Component} from 'react';
 import { Link } from "react-router-dom";
 import Post from './Post';
 import LinkBar from '../components/LinkBar'
+import { get } from "../request";
 
 // THIS IS THE DATA THAT FAVORITES WILL NEED TO POPULATE ITS LIST
 let data = [
-    {
-        title: "IPHONE SE",
-        cost: 450,
-        description: "This is my new phone wow! It is pretty wonderful. YEEEEET!",
-        contact: "abc123@gmail.com",
-        favorite: true
-    },
 
-    {
-        title: "IPHONE 11",
-        cost: 1000,
-        description: "NEW IPHONE 11. Perfect condition. Email me if you are interested.",
-        contact: "dsafasd@gmail.com",
-        favorite: true
-    }
 ]
 
 
@@ -29,8 +16,17 @@ class Favorites extends Component {
         super();
         this.state = {
             userId: "",
+            favList: [],
             linkBar: null,
         };
+    }
+
+    copyArray(arrToCopy) {
+        let copyArray = [];
+        for (let i = 0; i < arrToCopy.length; i++) {
+            copyArray.push(arrToCopy[i]);
+        }
+        return copyArray;
     }
 
     async componentDidMount() {
@@ -44,6 +40,8 @@ class Favorites extends Component {
                 <LinkBar key="linkBar" userId={this.props.location.state.userId} />
             )
             await this.setState({ linkBar: table })
+            await this.getFavoriteConnection();
+            
         }
         else {
             this.props.history.push(
@@ -55,21 +53,43 @@ class Favorites extends Component {
 
     }
 
-    favoriteList = () => {
+
+    async getFavoriteConnection() {
+        let response = await get(this, '/getFavorite?userId=' + this.state.userId).catch(error => {
+            this.setState({ message: "Request failed", postList: [] });
+            return;
+        })
+        console.log("response received");
+        let getFavoriteJson = await response.json();
+        if (getFavoriteJson.favorite_items.length <= 0) {
+            console.log("no items");
+        }
+        else {
+            await this.updateList(getFavoriteJson.favorite_items);
+        }
+
+
+    }
+
+
+    async updateList(items) {
+        let data = this.copyArray(items);
+        console.log(data[0][0].title);
         let rows = [];
         for (var i = 0; i < data.length; i++) {
             rows.push(<div><Link to={{
                 pathname: "/Post",
                 state: {
-                    title: data[i].title,
-                    cost: data[i].cost,
-                    description: data[i].description,
-                    contact: data[i].contact,
-                    favorite: data[i].favorite
+                    title: data[i][0].title,
+                    cost: data[i][0].cost,
+                    description: data[i][0].description,
+                    seller_id: data[i][0].user_id,
+                    userId: this.state.userId,
+                    itemId: data[i][0].id
                 }
-            }}>{data[i].title} - ${data[i].cost}</Link></div>);
+            }}>{data[i][0].title} - ${data[i][0].cost}</Link></div>);
         }
-        return rows
+        this.setState({ favList: rows })
     }
 
     render() {
@@ -78,7 +98,7 @@ class Favorites extends Component {
                 {this.state.linkBar}
                 <h1>Favorites</h1>
                 <div>
-                    {this.favoriteList()}
+                    {this.state.favList}
                 </div>
             </div>
     );

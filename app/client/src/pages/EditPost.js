@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import '../App.css';
 import TextInputComponent from '../components/TextInputComponent'
+import { Link } from "react-router-dom";
 import TextAreaComponent from '../components/TextAreaComponent'
 import ButtonComponent from '../components/ButtonComponent'
 import ImageDragDropComponent from '../components/ImageDragDropComponent'
@@ -139,6 +140,11 @@ class EditPost extends Component {
         return(
             <div>
                 {this.state.linkBar}
+                <Link
+                    to={{
+                        pathname: "/MyPosts",
+                        state: { userId: this.state.userId }
+                    }}> BACK </Link>
                 <h1>Edit Post</h1>
                 <TextInputComponent
                     label={"Title: "}

@@ -3,24 +3,11 @@ import {Link} from "react-router-dom";
 import TextInputComponent from '../components/TextInputComponent'
 import ButtonComponent from '../components/ButtonComponent'
 import LinkBar from '../components/LinkBar'
+import { get } from "../request";
 
 // THIS IS THE DATA THAT SEARCH PAGE WILL NEED TO RECEIVE AFTER CALLING THE SERVER
 let data = [
-    {
-        title: "MEGA PHONE",
-        cost: 500,
-        description: "This is my new MEGA phone wow! It is pretty wonderful. YEEEEET!",
-        contact: "abc123@gmail.com",
-        favorite: false
-    },
 
-    {
-        title: "SUPER MEGA PHONE",
-        cost: 900,
-        description: "NEW SUPER MEGA PHONE. Perfect condition. Email me if you are interested.",
-        contact: "dsafasd@gmail.com",
-        favorite: false
-    }
 ]
 
 
@@ -29,8 +16,11 @@ class Search extends Component {
         super();
         this.state = {
             userId: "",
+            search: '',
             linkBar: null,
+            searchList: null
         };
+        this.searchFor = '';
     }
 
     async componentDidMount() {
@@ -44,6 +34,7 @@ class Search extends Component {
                 <LinkBar key="linkBar" userId={this.props.location.state.userId} />
             )
             await this.setState({ linkBar: table })
+            await this.updateList();
         }
         else {
             this.props.history.push(
@@ -55,8 +46,31 @@ class Search extends Component {
 
     }
 
-    searchList = () => {
+    searchChange = (event) => {
+        //this.setState({ search: event.target.value });
+        this.searchFor = event.target.value;
+        console.log(this.searchFor);
+    };
 
+    search = (event) => {
+        console.log(this.searchFor);
+        this.searchConnection();
+    }
+
+    async searchConnection() {
+        console.log(this.searchFor);
+        let response = await get(this, '/search?keyword=' + this.searchFor).catch(error => {
+            this.setState({ message: "Request failed", postList: [] });
+            return;
+        })
+        let searchResponseJson = await response.json();
+        console.log("SEARCH RESPONSE JSON");
+        console.log(searchResponseJson);
+        data = searchResponseJson;
+        await this.updateList();
+    }
+
+    async updateList() {
         let rows = [];
         for (var i = 0; i < data.length; i++) {
             rows.push(<div><Link to={{
@@ -65,12 +79,13 @@ class Search extends Component {
                     title: data[i].title,
                     cost: data[i].cost,
                     description: data[i].description,
-                    contact: data[i].contact,
-                    favorite: data[i].favorite
+                    itemId: data[i].id,
+                    seller_id: data[i].user_id,
+                    userId: this.state.userId
                 }
             }}>{data[i].title} - ${data[i].cost}</Link></div>);
         }
-        return rows
+        this.setState({ searchList: rows })
     };
 
     render() {
@@ -78,12 +93,13 @@ class Search extends Component {
             <div>
                 {this.state.linkBar}
                 <h1> Search Page</h1>
-                <TextInputComponent label={"Find Item: "} />
+                <TextInputComponent label={"Find Item: "} logChange={this.searchChange}/>
                 <ButtonComponent
                     label={"Search"}
+                    onClick={this.search}
                     />
                 <div>
-                        {this.searchList()}
+                    {this.state.searchList}
                 </div>
             </div>
         );
