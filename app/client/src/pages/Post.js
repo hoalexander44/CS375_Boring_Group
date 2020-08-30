@@ -126,14 +126,21 @@ class Post extends Component {
     return(
         <div>
             {this.state.linkBar}
+
+            <Link
+                to={{
+                    pathname: "/Search",
+                    state: { userId: this.state.userId }
+                }}> BACK </Link>
+
             {
                 this.state.isFavorite
                     ? <FavoriteStar favoriteClass="favorite" onPress={this.testFavorite} />
                     : <FavoriteStar favoriteClass="unfavorite" onPress={this.testFavorite} />
             }
 
+            <h1>{this.props.location.state.title} - {this.props.location.state.cost}</h1>
 
-            <h1>{this.props.location.state.title} - {this.props.location.state.cost} (Basic Post)</h1>
 
             <p>
                 {this.props.location.state.description}

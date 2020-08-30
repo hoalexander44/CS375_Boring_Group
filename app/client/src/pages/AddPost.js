@@ -112,6 +112,11 @@ class AddPost extends Component {
         return(
             <div>
                 {this.state.linkBar}
+                <Link
+                    to={{
+                        pathname: "/MyPosts",
+                        state: { userId: this.state.userId }
+                    }}> BACK </Link>
                 <h1>Add Post</h1>
                 <div>
                     <Link to="/MyPosts">My Posts</Link>

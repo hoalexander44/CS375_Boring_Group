@@ -61,7 +61,12 @@ class Favorites extends Component {
         })
         console.log("response received");
         let getFavoriteJson = await response.json();
-        await this.updateList(getFavoriteJson.favorite_items);
+        if (getFavoriteJson.favorite_items.length <= 0) {
+            console.log("no items");
+        }
+        else {
+            await this.updateList(getFavoriteJson.favorite_items);
+        }
 
 
     }

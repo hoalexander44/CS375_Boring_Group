@@ -196,25 +196,31 @@ app.get('/getFavorite', function(req, res){
             // Getting item information from shop item table
             //res.json(db_res.rows);
             let itemRows = [];
-            for (let i = 0; i < db_res.rows.length; i++) {
-                console.log(`Handling /getFavorite request getting item information after gettings favorite ids`);
-                let query = `SELECT * FROM "shop"."item" WHERE "id" = $1`;
-                pool.query(query, [db_res.rows[i].item_id], (err, item_res) => {
-                    if (err) {
-                        console.log(err.stack);
-                        res.status(500).send({ error: "Failed to get from the database." });
-                    }
-                    else {
-                        itemRows.push(item_res.rows);
-                        if (i >= (db_res.rows.length - 1)) {
-                            let returnData = { "favorite_items": itemRows };
-                            res.json(returnData);
-                            return
+            if (db_res.rows.length !== 0) {
+                for (let i = 0; i < db_res.rows.length; i++) {
+                    console.log(`Handling /getFavorite request getting item information after gettings favorite ids`);
+                    let query = `SELECT * FROM "shop"."item" WHERE "id" = $1`;
+                    pool.query(query, [db_res.rows[i].item_id], (err, item_res) => {
+                        if (err) {
+                            console.log(err.stack);
+                            res.status(500).send({ error: "Failed to get from the database." });
                         }
-                    }
-                });
+                        else {
+                            itemRows.push(item_res.rows);
+                            if (i >= (db_res.rows.length - 1)) {
+                                let returnData = { "favorite_items": itemRows };
+                                res.json(returnData);
+                                return
+                            }
+                        }
+                    });
 
 
+                }
+            }
+            else {
+                let returnData = { "favorite_items": [] };
+                res.json(returnData);
             }
         }
     })
