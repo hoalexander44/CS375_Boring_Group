@@ -15,7 +15,9 @@ class EditPost extends Component {
         this.state = {
             message: '',
             userId: "",
-            linkBar: null
+            linkBar: null,
+            imageDrop: null,
+            imageDropRef: null
         };
 
         this.description = '';
@@ -40,6 +42,8 @@ class EditPost extends Component {
             console.log("DESCRIPTION: " + this.description);
             this.cost = this.props.location.state.loadedCost;
             this.title = this.props.location.state.loadedTitle;
+
+            await this.createImageDropComponent();
         }
         else {
             this.props.history.push(
@@ -50,6 +54,18 @@ class EditPost extends Component {
         }
 
 
+    }
+
+    async createImageDropComponent() {
+        let imageDrop = [];
+        let refs = [];
+        let imageDropRef = React.createRef();
+        refs.push(imageDropRef);
+        imageDrop.push(
+            <ImageDragDropComponent ref={imageDropRef} />
+        )
+        this.setState({ imageDropRef: imageDropRef })
+        this.setState({ imageDrop: imageDrop });
     }
 
     descriptionChange = (event) => {
@@ -90,6 +106,9 @@ class EditPost extends Component {
                     console.log(err);
                 }
             );
+
+            await this.state.imageDropRef.current.submitUpload(this.itemId);
+
             this.props.history.push(
                 {
                     pathname: "/MyPosts",
@@ -161,7 +180,7 @@ class EditPost extends Component {
                     logChange={this.descriptionChange}
                     defaultText={this.props.location.state.loadedDescription}
                 />
-                <ImageDragDropComponent />
+                {this.state.imageDrop}
                 <TextOutputComponent
                     text={this.state.message}/>
                 <ButtonComponent

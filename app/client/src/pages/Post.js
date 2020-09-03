@@ -19,6 +19,17 @@ class Post extends Component {
         };
     }
 
+    bufferToEncode(buffer) {
+        //console.log(buffer);
+        var binary = '';
+        var bytes = new Uint8Array(buffer);
+        var len = bytes.byteLength;
+        for (var i = 0; i < len; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return window.btoa(binary);
+    }
+
     async componentDidMount() {
 
         // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar
@@ -35,6 +46,25 @@ class Post extends Component {
             //await this.setState({isFavorite: this.props.location.state.isFavorite});
             await this.findIfFavorited();
             await this.getEmail();
+
+            // GET IMAGE FUNCTIONALITY ============================================================================
+            let response = await get(this, '/getImage?itemId=' + this.props.location.state.itemId).catch(error => {
+                this.setState({ message: "Request failed", postList: [] });
+                return;
+            })
+            if (response.status == 200) {
+                let responseJson = await response.json();
+                this.setState({ image: responseJson.imageBytes })
+                let test = this.bufferToEncode(responseJson.imageBytes.split(""));
+                console.log(test);
+                let together = ("data:image/png;base64," + responseJson.imageBytes);
+                this.setState({ realImage: together });
+                console.log(this.state.realImage);
+            }
+            else {
+                console.log("get image failed");
+            }
+            // ===========================================================================================================
         }
         else {
             this.props.history.push(
@@ -148,11 +178,12 @@ class Post extends Component {
                 {this.props.location.state.description}
             </p>
 
+            contact seller at: {this.state.email}
+
             <div>
-                IMAGE HERE
+                <img src={this.state.realImage} />
             </div>
 
-            contact seller at: {this.state.email}
         </div>
     );
   }

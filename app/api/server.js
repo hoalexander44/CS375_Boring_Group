@@ -3,6 +3,31 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
 const { Pool, Client } = require('pg');
+const multer = require('multer');
+const fs = require('fs');
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+
+const fileFilter = (req, file, cb) => {
+    // reject a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    }
+    else {
+        cb(null, false);
+    }
+}
+const upload = multer({ storage: storage, fileFilter: fileFilter });
+
 
 const saltRounds = 10;
 const PORT = 3001;
@@ -58,15 +83,44 @@ function handleDbMutateRequest(endpoint, reqBody, res, query, queryParams, succe
     })
 }
 
-app.post('/add', function(req, res) {
+//app.post('/add', function(req, res) {
+//    let query =
+//`INSERT INTO "shop"."item"
+//("title", "description", "cost", "user_id")
+//VALUES
+//($1,$2,$3,$4)`;
+//    let queryParams = [req.body.title, req.body.description, req.body.cost, req.body.userId];
+//    handleDbMutateRequest('/add', req.body, res, query, queryParams, 201)
+//});
+
+app.post('/add', function (req, res) {
     let query =
-`INSERT INTO "shop"."item"
+        `INSERT INTO "shop"."item"
 ("title", "description", "cost", "user_id")
 VALUES
-($1,$2,$3,$4)`;
+($1,$2,$3,$4) RETURNING "id"`;
     let queryParams = [req.body.title, req.body.description, req.body.cost, req.body.userId];
-    handleDbMutateRequest('/add', req.body, res, query, queryParams, 201)
+    handleAddMutateRequest('/add', req.body, res, query, queryParams, 201)
 });
+
+function handleAddMutateRequest(endpoint, reqBody, res, query, queryParams, successStatusCode) {
+    console.log(`Handling ${endpoint} request with payload ${JSON.stringify(reqBody)}`);
+    pool.query(query, queryParams, (err, db_res) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({ error: "Failed to update database." });
+        } else {
+            if (db_res.rowCount === 0) {
+                res.status(400).send({ error: "No rows were updated" })
+            } else {
+                console.log("SUCCESS MUTATE");
+                console.log("DATABASE RETURNED: " + db_res.rows[0].id);
+                res.json({ insert_id: db_res.rows[0].id });
+            }
+        }
+    })
+}
+
 
 //Updates the title, description, and cost of a post
 app.post('/edit', function(req, res) {
@@ -364,6 +418,43 @@ app.post("/auth", function (req, res) {
             res.status(500).send(); // server error
         });
 });
+
+
+app.post("/uploadImage", upload.single('productImage'),(req, res, next) => {
+    console.log(req.file);
+    res.status(200).send();
+})
+
+
+app.get("/getImage", function (req, res) {
+    console.log(req.query.itemId);
+    if (req.query.itemId !== undefined) {
+        let path = './uploads/' + req.query.itemId;
+
+        // validation to see if image exists
+        fs.access(path, fs.F_OK, (err) => {
+            if (err) {
+                console.error(err);
+                console.log("file does not exist");
+                res.status(400).send();
+                return;
+            }
+
+            // returns byte data of image for client render
+            fs.readFile(path, function (err, data) {
+                console.log("DATA");
+                console.log(data);
+                console.log(Buffer.from(data).toString('base64'));
+                let byteData = Buffer.from(data).toString('base64');
+                let sendData = { imageBytes: byteData };
+                res.json(sendData);
+            })
+        })
+    }
+    else {
+        res.status(400).send();
+    }
+})
 
 
 app.listen(PORT, HOSTNAME, () => {
