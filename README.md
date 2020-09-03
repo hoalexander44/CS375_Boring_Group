@@ -23,8 +23,8 @@ STARTING THE CLIENT
   1. cd into app/client
   2. run npm install to install all the required packages
   3. The server that you ran should be on localhost:3001 and the configurations for client is already set to that host and port
-  4. If for whatever reason you changed the server port, make sure to change the .env file in app/client as well to match
-      As well as the config.js file in app/client/src
+  4. If for whatever reason you changed the server port, make sure to change the .env file in app/client as well. 
+     ALSO CHANGE the config.js file in app/client/src
   5. Open a command console
   6. run npm start
   7. If a new tab in your default browser does not pop up, then open your browser and go to localhost:3000 to see the react app
