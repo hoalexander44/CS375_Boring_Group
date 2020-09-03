@@ -41,9 +41,11 @@ class HomePage extends Component {
     return(
         <div>
             {this.state.linkBar}
-            <h1>Home</h1>
+            <h1>THE "BORING" MARKET PLACE</h1>
             <p>This is the brand new market place website we created!</p>
             <p>Please use the link bar to navigate!</p>
+            <h2>VERSION 1.0</h2>
+            <p>Developed by Alexander Ho, Harley Sacramento, Jared Miller, Akshit Anand</p>
         </div>
     );
   }

@@ -97,7 +97,7 @@ class Search extends Component {
         return (
             <div>
                 {this.state.linkBar}
-                <h1> Search Page</h1>
+                <h1> Search Posts</h1>
                 <TextInputComponent label={"Find Item: "} logChange={this.searchChange}/>
                 <ButtonComponent
                     label={"Search"}

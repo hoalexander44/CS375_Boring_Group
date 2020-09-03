@@ -141,21 +141,17 @@ WHERE "id"=$1`;
     let delFaveQueryParams = [req.body.itemId];
 
 
-
     pool.query(delFaveQuery, delFaveQueryParams, (err, db_res) => {
         if (err) {
             console.log(err);
             res.status(500).send({ error: "Failed to update database." });
             return;
         } else {
-            if (db_res.rowCount === 0) {
-                res.status(400).send({ error: "No rows were updated" })
-                return;
-            } else {
-                console.log("SUCCESS MUTATE");
-                let queryParams = [req.body.itemId];
-                handleDbMutateRequest('/delete', req.body, res, query, queryParams, 204);
-            }
+            console.log("SUCCESS MUTATE");
+            let queryParams = [req.body.itemId];
+
+
+            handleDbMutateRequest('/delete', req.body, res, query, queryParams, 204);
         }
     })
 
