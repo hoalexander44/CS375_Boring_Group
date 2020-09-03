@@ -1,2 +1,6 @@
+set folder=".\uploads"
+cd /d %folder%
+for /F "delims=" %%i in ('dir /b') do (rmdir "%%i" /s/q || del "%%i" /s/q)
+cd /d ".."
 psql -U postgres -f db/db.sql
 node server.js
