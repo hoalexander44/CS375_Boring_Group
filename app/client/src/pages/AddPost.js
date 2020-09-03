@@ -26,6 +26,7 @@ class AddPost extends Component {
         //this.userId = props.userId;
     }
 
+
     async componentDidMount() {
 
         // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar
@@ -51,6 +52,7 @@ class AddPost extends Component {
 
     }
 
+
     async createImageDropComponent() {
         let imageDrop = [];
         let refs = [];
@@ -63,21 +65,21 @@ class AddPost extends Component {
         this.setState({ imageDrop: imageDrop });
     }
 
+
     descriptionChange = (event) => {
         this.description = event.target.value;
     };
+
 
     titleChange = (event) => {
         this.title = event.target.value;
     };
 
+
     costChange = (event) => {
         this.cost = event.target.value;
     };
 
-    //userIdChange = (event) => {
-    //    this.userId = event.target.value;
-    //};
 
     isRequestValid = (title, description, cost) => {
         return title && description && !isNaN(cost);
@@ -87,6 +89,7 @@ class AddPost extends Component {
     submit = () => {
         this.submitConnection();
     };
+
 
     async submitConnection() {
         if (this.isRequestValid(this.title, this.description, this.cost)) {

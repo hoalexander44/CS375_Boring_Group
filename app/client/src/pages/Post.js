@@ -15,20 +15,21 @@ class Post extends Component {
             sellerId: "",
             isFavorite: false, //TODO
             linkBar: null,
-            email: ''
+            email: '',
+            returnPath: "/Search"
         };
     }
 
-    bufferToEncode(buffer) {
-        //console.log(buffer);
-        var binary = '';
-        var bytes = new Uint8Array(buffer);
-        var len = bytes.byteLength;
-        for (var i = 0; i < len; i++) {
-            binary += String.fromCharCode(bytes[i]);
-        }
-        return window.btoa(binary);
-    }
+    //bufferToEncode(buffer) {
+    //    //console.log(buffer);
+    //    var binary = '';
+    //    var bytes = new Uint8Array(buffer);
+    //    var len = bytes.byteLength;
+    //    for (var i = 0; i < len; i++) {
+    //        binary += String.fromCharCode(bytes[i]);
+    //    }
+    //    return window.btoa(binary);
+    //}
 
     async componentDidMount() {
 
@@ -43,11 +44,12 @@ class Post extends Component {
             )
             await this.setState({ linkBar: table });
 
+            await this.setState({ returnPath: this.props.location.state.returnPath });
             //await this.setState({isFavorite: this.props.location.state.isFavorite});
             await this.findIfFavorited();
             await this.getEmail();
 
-            // GET IMAGE FUNCTIONALITY ============================================================================
+            // GET IMAGE FUNCTIONALITY
             let response = await get(this, '/getImage?itemId=' + this.props.location.state.itemId).catch(error => {
                 this.setState({ message: "Request failed", postList: [] });
                 return;
@@ -55,8 +57,8 @@ class Post extends Component {
             if (response.status == 200) {
                 let responseJson = await response.json();
                 this.setState({ image: responseJson.imageBytes })
-                let test = this.bufferToEncode(responseJson.imageBytes.split(""));
-                console.log(test);
+                //let test = this.bufferToEncode(responseJson.imageBytes.split(""));
+                //console.log(test);
                 let together = ("data:image/png;base64," + responseJson.imageBytes);
                 this.setState({ realImage: together });
                 console.log(this.state.realImage);
@@ -64,7 +66,7 @@ class Post extends Component {
             else {
                 console.log("get image failed");
             }
-            // ===========================================================================================================
+
         }
         else {
             this.props.history.push(
@@ -154,6 +156,7 @@ class Post extends Component {
         }
     }
 
+
   render() {
     return(
         <div>
@@ -161,8 +164,11 @@ class Post extends Component {
 
             <Link
                 to={{
-                    pathname: "/Search",
-                    state: { userId: this.state.userId }
+                    pathname: this.state.returnPath,
+                    state: {
+                        userId: this.state.userId,
+                        saveSearch: true
+                    }
                 }}> BACK </Link>
 
             {

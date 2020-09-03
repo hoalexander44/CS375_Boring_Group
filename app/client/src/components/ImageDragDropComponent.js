@@ -3,11 +3,8 @@ import { Link } from "react-router-dom";
 import './component.css';
 import { post } from "../request";
 import axios from 'axios';
+import { myConfig } from '../config.js';
 
-
-function save(data, filename, type) {
-
-}
 
 class ImageDragDropComponent extends Component {
     constructor(props) {
@@ -26,12 +23,10 @@ class ImageDragDropComponent extends Component {
 
     async uploadImage(file, insertId) {
         if (file !== null) {
-            //let formData = new FormData(files[0]);
             const fd = new FormData();
             fd.append('productImage', file, insertId);
             console.log(fd);
-            let response = await axios.post('http://localhost:3001/uploadImage', fd);
-            //let response = post('/uploadImage', fd);
+            let response = await axios.post( myConfig.serverUrl + '/uploadImage', fd);
             console.log(response);
         }
     }
