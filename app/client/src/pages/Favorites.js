@@ -85,7 +85,8 @@ class Favorites extends Component {
                     description: data[i][0].description,
                     seller_id: data[i][0].user_id,
                     userId: this.state.userId,
-                    itemId: data[i][0].id
+                    itemId: data[i][0].id,
+                    returnPath: "/Favorites"
                 }
             }}>{data[i][0].title} - ${data[i][0].cost}</Link></div>);
         }

@@ -15,14 +15,17 @@ class AddPost extends Component {
         this.state = {
             message: '',
             userId: "",
-            linkBar: null
+            linkBar: null,
+            imageDrop: null,
+            imageDropRef: null
+            
         };
-
         this.description = '';
         this.title = '';
         this.cost = 0;
         //this.userId = props.userId;
     }
+
 
     async componentDidMount() {
 
@@ -35,6 +38,9 @@ class AddPost extends Component {
                 <LinkBar key="linkBar" userId={this.props.location.state.userId} />
             )
             await this.setState({ linkBar: table })
+            await this.createImageDropComponent();
+
+
         }
         else {
             this.props.history.push(
@@ -46,21 +52,34 @@ class AddPost extends Component {
 
     }
 
+
+    async createImageDropComponent() {
+        let imageDrop = [];
+        let refs = [];
+        let imageDropRef = React.createRef();
+        refs.push(imageDropRef);
+        imageDrop.push(
+            <ImageDragDropComponent ref={imageDropRef}/>
+        )
+        this.setState({ imageDropRef: imageDropRef })
+        this.setState({ imageDrop: imageDrop });
+    }
+
+
     descriptionChange = (event) => {
         this.description = event.target.value;
     };
+
 
     titleChange = (event) => {
         this.title = event.target.value;
     };
 
+
     costChange = (event) => {
         this.cost = event.target.value;
     };
 
-    //userIdChange = (event) => {
-    //    this.userId = event.target.value;
-    //};
 
     isRequestValid = (title, description, cost) => {
         return title && description && !isNaN(cost);
@@ -71,25 +90,28 @@ class AddPost extends Component {
         this.submitConnection();
     };
 
+
     async submitConnection() {
         if (this.isRequestValid(this.title, this.description, this.cost)) {
             this.setState({ message: '' });
 
             let data = { title: this.title, description: this.description, cost: this.cost, userId: this.state.userId }; // change for later when we have login
 
-            await post(this, '/add', data)
-                .then(response => {
-                    if (response.status === 201) {
-                        this.setState({ message: "Post created" });
-                    } else {
-                        this.setState({ message: "Request failed" });
-                        console.log(response);
-                    }
-                }).catch(err => {
-                    this.setState({ message: "Request failed" });
-                    console.log(err);
-                }
-                );
+            let response = await post(this, '/add', data).catch(err => {
+                this.setState({ message: "Request failed" });
+                console.log(err);
+            });
+
+
+            if (response.status === 200) {
+                this.setState({ message: "Post created" });
+                let responseJson = await response.json();
+                await this.state.imageDropRef.current.submitUpload(responseJson.insert_id);
+            } else {
+                this.setState({ message: "Request failed" });
+                console.log(response);
+            }
+
 
             this.props.history.push(
                 {
@@ -130,8 +152,8 @@ class AddPost extends Component {
                     logChange={this.costChange}/>
                 <TextAreaComponent
                     label={"Description: "}
-                    logChange={this.descriptionChange}/>
-                <ImageDragDropComponent />
+                    logChange={this.descriptionChange} />
+                {this.state.imageDrop}
                 <TextOutputComponent
                     text={this.state.message}/>
                 <ButtonComponent

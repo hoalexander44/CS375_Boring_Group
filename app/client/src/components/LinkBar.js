@@ -44,7 +44,10 @@ class LinkBar extends Component {
                             <th><Link
                                 to={{
                                     pathname: "/Search",
-                                    state: { userId: this.props.userId }
+                                    state: {
+                                        userId: this.props.userId,
+                                        saveSearch: false
+                                    }
                                 }}> Search </Link></th>
                             <th><Link
                                 to={{

@@ -3,6 +3,31 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require("bcrypt");
 const { Pool, Client } = require('pg');
+const multer = require('multer');
+const fs = require('fs');
+
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+
+const fileFilter = (req, file, cb) => {
+    // reject a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true);
+    }
+    else {
+        cb(null, false);
+    }
+}
+const upload = multer({ storage: storage, fileFilter: fileFilter });
+
 
 const saltRounds = 10;
 const PORT = 3001;
@@ -41,6 +66,7 @@ app.get('/', function(req, res) {
     res.send('hello!');
 });
 
+
 function handleDbMutateRequest(endpoint, reqBody, res, query, queryParams, successStatusCode) {
     console.log(`Handling ${endpoint} request with payload ${JSON.stringify(reqBody)}`);
     pool.query(query, queryParams, (err, db_res) => {
@@ -58,15 +84,38 @@ function handleDbMutateRequest(endpoint, reqBody, res, query, queryParams, succe
     })
 }
 
-app.post('/add', function(req, res) {
+
+app.post('/add', function (req, res) {
     let query =
-`INSERT INTO "shop"."item"
+        `INSERT INTO "shop"."item"
 ("title", "description", "cost", "user_id")
 VALUES
-($1,$2,$3,$4)`;
+($1,$2,$3,$4) RETURNING "id"`;
     let queryParams = [req.body.title, req.body.description, req.body.cost, req.body.userId];
-    handleDbMutateRequest('/add', req.body, res, query, queryParams, 201)
+    handleAddMutateRequest('/add', req.body, res, query, queryParams, 201)
 });
+
+
+// when item is added, the item id is returned as well
+// returned item id is used for image uploading
+function handleAddMutateRequest(endpoint, reqBody, res, query, queryParams, successStatusCode) {
+    console.log(`Handling ${endpoint} request with payload ${JSON.stringify(reqBody)}`);
+    pool.query(query, queryParams, (err, db_res) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({ error: "Failed to update database." });
+        } else {
+            if (db_res.rowCount === 0) {
+                res.status(400).send({ error: "No rows were updated" })
+            } else {
+                console.log("SUCCESS MUTATE");
+                console.log("DATABASE RETURNED: " + db_res.rows[0].id);
+                res.json({ insert_id: db_res.rows[0].id });
+            }
+        }
+    })
+}
+
 
 //Updates the title, description, and cost of a post
 app.post('/edit', function(req, res) {
@@ -80,14 +129,35 @@ WHERE "id"=$4`;
     handleDbMutateRequest('/edit', req.body, res, query, queryParams, 204);
 });
 
+
 //Deletes post from the database
 app.post('/delete', function(req, res) {
     let query =
 `DELETE FROM "shop"."item"
 WHERE "id"=$1`;
-    let queryParams = [req.body.itemId];
-    handleDbMutateRequest('/delete', req.body, res, query, queryParams, 204);
+
+    console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.body)}`);
+    let delFaveQuery = `DELETE FROM "shop"."userFavorites" WHERE "userFavorites"."item_id" = $1`;
+    let delFaveQueryParams = [req.body.itemId];
+
+
+    pool.query(delFaveQuery, delFaveQueryParams, (err, db_res) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send({ error: "Failed to update database." });
+            return;
+        } else {
+            console.log("SUCCESS MUTATE");
+            let queryParams = [req.body.itemId];
+
+
+            handleDbMutateRequest('/delete', req.body, res, query, queryParams, 204);
+        }
+    })
+
+
 });
+
 
 //Get posts created by the user
 app.get('/getPosts', function(req, res) {
@@ -110,6 +180,7 @@ WHERE u.id=$1`;
     });
 });
 
+
 //Searches for a post in the database
 app.get('/search', function(req, res){
     console.log(`Handling /search request with query ${JSON.stringify(req.query)}`);
@@ -130,7 +201,6 @@ app.get('/search', function(req, res){
         }
     })
     
-    //handleDbMutateRequest('/search', req.body, res, query, queryParams, 204);
 });
 
 
@@ -196,7 +266,6 @@ app.get('/getFavorite', function(req, res){
         else {
 
             // Getting item information from shop item table
-            //res.json(db_res.rows);
             let itemRows = [];
             if (db_res.rows.length !== 0) {
                 for (let i = 0; i < db_res.rows.length; i++) {
@@ -227,19 +296,18 @@ app.get('/getFavorite', function(req, res){
         }
     })
     
-    //handleDbMutateRequest('/getFavorite', req.body, res, query, queryParams, 204);
 });
+
 
 app.post('/addFavorite', function(req,res){
     console.log(`Handling /addFavorite request with query ${JSON.stringify(req.body)}`);
-    //console.log(req.body.userId);
-    //console.log(req.body.itemId);
     let query = `INSERT INTO "shop"."userFavorites" ("user_id", "item_id") VALUES ($1, $2);`;
     let queryParams = [req.body.userId, req.body.itemId];
     
     handleDbMutateRequest('/addFavorite', req.body, res, query, queryParams, 204);
     
 });
+
 
 app.post('/deleteFavorite', function(req, res){
     console.log(`Handling /deleteFavorite request with query ${JSON.stringify(req.body)}`);
@@ -248,6 +316,7 @@ app.post('/deleteFavorite', function(req, res){
     
     handleDbMutateRequest('/deleteFavorite', req.body, res, query, queryParams, 204);
 })
+
 
 //register
 //register
@@ -364,6 +433,40 @@ app.post("/auth", function (req, res) {
             res.status(500).send(); // server error
         });
 });
+
+
+app.post("/uploadImage", upload.single('productImage'),(req, res, next) => {
+    console.log(req.file);
+    res.status(200).send();
+})
+
+
+app.get("/getImage", function (req, res) {
+    console.log(req.query.itemId);
+    if (req.query.itemId !== undefined) {
+        let path = './uploads/' + req.query.itemId;
+
+        // validation to see if image exists
+        fs.access(path, fs.F_OK, (err) => {
+            if (err) {
+                console.error(err);
+                console.log("file does not exist");
+                res.status(400).send();
+                return;
+            }
+
+            // returns byte data of image for client render
+            fs.readFile(path, function (err, data) {
+                let byteData = Buffer.from(data).toString('base64');
+                let sendData = { imageBytes: byteData };
+                res.json(sendData);
+            })
+        })
+    }
+    else {
+        res.status(400).send();
+    }
+})
 
 
 app.listen(PORT, HOSTNAME, () => {

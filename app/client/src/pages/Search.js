@@ -34,7 +34,11 @@ class Search extends Component {
                 <LinkBar key="linkBar" userId={this.props.location.state.userId} />
             )
             await this.setState({ linkBar: table })
-            await this.updateList();
+            if (this.props.location.state.saveSearch) {
+                await this.updateList();
+            }
+            //await this.updateList();
+
         }
         else {
             this.props.history.push(
@@ -81,7 +85,8 @@ class Search extends Component {
                     description: data[i].description,
                     itemId: data[i].id,
                     seller_id: data[i].user_id,
-                    userId: this.state.userId
+                    userId: this.state.userId,
+                    returnPath: "/Search"
                 }
             }}>{data[i].title} - ${data[i].cost}</Link></div>);
         }
@@ -92,7 +97,7 @@ class Search extends Component {
         return (
             <div>
                 {this.state.linkBar}
-                <h1> Search Page</h1>
+                <h1> Search Posts</h1>
                 <TextInputComponent label={"Find Item: "} logChange={this.searchChange}/>
                 <ButtonComponent
                     label={"Search"}

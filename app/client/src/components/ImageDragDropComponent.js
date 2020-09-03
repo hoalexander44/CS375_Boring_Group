@@ -1,14 +1,36 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 import './component.css';
+import { post } from "../request";
+import axios from 'axios';
+import { myConfig } from '../config.js';
 
-//www.youtube.com/watch?v=hqSlVvKvvjQ was heavily referenced
-
-function save(data, filename, type) {
-
-}
 
 class ImageDragDropComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            fileImage: null,
+            fileReady: false
+        };
+    }
+
+    submitUpload = (insertId) => {
+        console.log("TEST UPLOAD: " + insertId);
+        this.uploadImage(this.state.fileImage, insertId);
+
+    }
+
+    async uploadImage(file, insertId) {
+        if (file !== null) {
+            const fd = new FormData();
+            fd.append('productImage', file, insertId);
+            console.log(fd);
+            let response = await axios.post( myConfig.serverUrl + '/uploadImage', fd);
+            console.log(response);
+        }
+    }
+
 
     classChange = (event) => {
         event.preventDefault();
@@ -36,18 +58,26 @@ class ImageDragDropComponent extends Component {
 
         console.log(files[0]);
         console.log("valid file!");
+        this.setState({ fileImage: files[0] });
+        this.setState({fileReady: true});
     }
 
     render() {
 
         return (
+            <div>
+                {
+                    this.state.fileReady
+                        ? <div>FILE READY</div>
+                        : <div
+                            className="dropzone"
+                            onDragOver={this.classChange}
+                            onDragLeave={this.classRevert}
+                            onDrop={this.fileDropped}>
+                            Drop files here to upload
+                          </div>
+                }
 
-            <div
-                className="dropzone"
-                onDragOver={this.classChange}
-                onDragLeave={this.classRevert}
-                onDrop={this.fileDropped}>
-                Drop files here to upload
             </div>
         );
     }

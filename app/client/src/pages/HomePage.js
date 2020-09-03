@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import LinkBar from '../components/LinkBar'
+import { get } from "../request";
 
 
 class HomePage extends Component {
@@ -10,6 +11,7 @@ class HomePage extends Component {
             linkBar: null,
         };
     }
+
 
     async componentDidMount() {
 
@@ -22,6 +24,7 @@ class HomePage extends Component {
                 <LinkBar key="linkBar" userId={this.props.location.state.userId} />
             )
             await this.setState({ linkBar: table })
+
         }
         else {
             this.props.history.push(
@@ -38,9 +41,11 @@ class HomePage extends Component {
     return(
         <div>
             {this.state.linkBar}
-            <h1>Home</h1>
+            <h1>THE "BORING" MARKET PLACE</h1>
             <p>This is the brand new market place website we created!</p>
             <p>Please use the link bar to navigate!</p>
+            <h2>VERSION 1.0</h2>
+            <p>Developed by Alexander Ho, Harley Sacramento, Jared Miller, Akshit Anand</p>
         </div>
     );
   }

@@ -15,7 +15,9 @@ class EditPost extends Component {
         this.state = {
             message: '',
             userId: "",
-            linkBar: null
+            linkBar: null,
+            imageDrop: null,
+            imageDropRef: null
         };
 
         this.description = '';
@@ -23,6 +25,7 @@ class EditPost extends Component {
         this.cost = 0;
         this.itemId = props.itemId;
     }
+
 
     async componentDidMount() {
         // setups a barrier where you must login to enter. Also keeps track of the userId through the link bar
@@ -40,6 +43,8 @@ class EditPost extends Component {
             console.log("DESCRIPTION: " + this.description);
             this.cost = this.props.location.state.loadedCost;
             this.title = this.props.location.state.loadedTitle;
+
+            await this.createImageDropComponent();
         }
         else {
             this.props.history.push(
@@ -52,25 +57,44 @@ class EditPost extends Component {
 
     }
 
+
+    async createImageDropComponent() {
+        let imageDrop = [];
+        let refs = [];
+        let imageDropRef = React.createRef();
+        refs.push(imageDropRef);
+        imageDrop.push(
+            <ImageDragDropComponent ref={imageDropRef} />
+        )
+        this.setState({ imageDropRef: imageDropRef })
+        this.setState({ imageDrop: imageDrop });
+    }
+
+
     descriptionChange = (event) => {
         this.description = event.target.value;
     };
+
 
     titleChange = (event) => {
         this.title = event.target.value;
     };
 
+
     costChange = (event) => {
         this.cost = event.target.value;
     };
+
 
     isRequestValid = (title, description, cost, itemId) => {
         return title && description && !isNaN(cost) && itemId;
     };
 
+
     submit = () => {
         this.submitConnection();
     };
+
 
     async submitConnection() {
         if (this.isRequestValid(this.title, this.description, this.cost, this.itemId)) {
@@ -90,6 +114,9 @@ class EditPost extends Component {
                     console.log(err);
                 }
             );
+
+            await this.state.imageDropRef.current.submitUpload(this.itemId);
+
             this.props.history.push(
                 {
                     pathname: "/MyPosts",
@@ -104,9 +131,11 @@ class EditPost extends Component {
         }
     }
 
+
     delete = () => {
         this.deleteConnection();
     };
+
 
     async deleteConnection() {
         this.setState({ message: '' });
@@ -136,6 +165,7 @@ class EditPost extends Component {
         );
     }
 
+
     render() {
         return(
             <div>
@@ -161,7 +191,7 @@ class EditPost extends Component {
                     logChange={this.descriptionChange}
                     defaultText={this.props.location.state.loadedDescription}
                 />
-                <ImageDragDropComponent />
+                {this.state.imageDrop}
                 <TextOutputComponent
                     text={this.state.message}/>
                 <ButtonComponent
